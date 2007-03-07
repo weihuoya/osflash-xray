@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+<docs>
+  <packages>
+    <package name="com.neoarchaic.ui" />
+  </packages>
+  <classes>
+    <class name="Tooltip" package="com.neoarchaic.ui" fullName="com.neoarchaic.ui.Tooltip" extends="Object" src="C:\Documents and Settings\Karina\My Documents\ActionScriptClasses\com\neoarchaic\ui\Tooltip.as">
+      <description>A Customizable static class for generating and displaying Tooltips from anywhere in your code.&lt;br&gt;
+Must reside in a folder structure corresponding to the package: com.neoarchaic.ui.  There are no assests for the library, since the tooltip is created and drawn dynamically.&lt;br&gt;
+&lt;br /&gt;&lt;br /&gt;
+The tooltip is created by invoking the static Tooltip class methods: Tooltip.show() and Tooltip.hide() (see method documentation for each method). &lt;br&gt;
+&lt;br /&gt;&lt;br /&gt;
+This tooltip supports html and will use CSS to style the text, if the html option is set to true. The passed toolitp text will then be automatically enclosed in a &lt;body&gt; tag. The default value for the html option is false.
+&lt;br /&gt;&lt;br /&gt;
+You can customize the tool both globally and locally.&lt;br&gt;
+Globally: Set options one at a time by using the static setOption () method. &lt;br&gt;
+To set multiple options in one go, set the public "options" property to an object containing one or more options (see example). &lt;br&gt;
+Locally: Pass an object with the options to the static Tooltip.show () method.
+In either case, only the options that have default values will be used, the rest will be ignored.
+&lt;br /&gt;&lt;br /&gt;
+&lt;b&gt;Examples:&lt;/b&gt;&lt;br&gt;
+&lt;code&gt;
+import ui.Tooltip; &lt;br&gt;
+Tooltip.options = {html: true, width: 300}&lt;br&gt;
+Tooltip.setOption("delay", 1) &lt;br&gt;
+Tooltip.show("Hi, I'm a tooltip. \nI can have multiple lines and I also wrap around") &lt;br&gt;
+Tooltip.show("Hi, I'm a delayed tooltip.", {delay: 2}) &lt;br&gt;
+Tooltip.hide() &lt;br&gt;
+&lt;/code&gt;
+&lt;br /&gt;&lt;br /&gt;
+&lt;b&gt;Author:&lt;/b&gt;&lt;br&gt;
+Karina Steffens &lt;br&gt;
+Neo-Archaic &lt;/br&gt;
+&lt;a href = "http://www.neo-archaic.net" target = "_blank"&gt; www.neo-archaic.net &lt;/a&gt; &lt;br&gt;
+February 2005</description>
+      <commentTags>
+        <commentTag name="summary">A Customizable static class for generating and displaying Tooltips from anywhere in your code.&lt;br&gt;
+Must reside in a folder structure corresponding to the package: com.neoarchaic.ui.</commentTag>
+        <commentTag name="class" />
+      </commentTags>
+      <properties>
+        <property name="options" type="Object" fullType="Object" readable="true" writable="true" isField="false">
+          <description>Use to change multiple default options globally</description>
+          <attributes>
+            <attribute value="public" />
+            <attribute value="static" />
+          </attributes>
+          <commentTags>
+            <commentTag name="summary">Use to change multiple default options globally</commentTag>
+            <commentTag name="param" ref="options:Object">&lt;b&gt;An object with the following optional properties:&lt;/b&gt;</commentTag>
+            <commentTag name="param" ref="options.delay:Number">delay in seconds (default: 0.5 second)</commentTag>
+            <commentTag name="param" ref="options.width:Number">maximum width of the tooltip window (default: 200px)</commentTag>
+            <commentTag name="param" ref="options.bgColor:Color">Background color of the tooltip (default: 0xFFFFDD - light yellow)</commentTag>
+            <commentTag name="param" ref="options.alpha:Number">Transparency of the tooltip (default: 85)</commentTag>
+            <commentTag name="param" ref="optoins.corner:Number">The diameter for the rounded corner (default: 5, for sharp corners pass 0)</commentTag>
+            <commentTag name="param" ref="options.margin:Number">(default: 2);</commentTag>
+            <commentTag name="param" ref="options.font:String">(default: "Verdana")</commentTag>
+            <commentTag name="param" ref="options.color:Color">Text and line color (default 0xFFFFFF)</commentTag>
+            <commentTag name="param" ref="options.size:Number">Font size (default: 10)</commentTag>
+            <commentTag name="param" ref="options.bold:Boolean">(default: false)</commentTag>
+            <commentTag name="param" ref="options.html:Boolean">(default: true)</commentTag>
+          </commentTags>
+        </property>
+      </properties>
+      <methods>
+        <method name="show" type="Void" fullType="Void">
+          <description>Show the Tooltip after a delay &lt;br&gt;
+Example 1: (No options) &lt;br&gt;
+&lt;code&gt;Tooltip.show ("Here is some example text for the static tooltip class"); &lt;/code&gt;&lt;br&gt;
+Example 2: (One option) &lt;br&gt;
+&lt;code&gt;Tooltip.show ("Here is some example text for the static tooltip class", {delay: 0}); &lt;/code&gt;&lt;br&gt;
+Example 3: (Many options)&lt;br&gt;
+&lt;code&gt;Tooltip.show ("Here is some example text for the static tooltip class", {delay:1, width:300, bgColor:0xFFFFFF, alpha:80, corner: 10, margiin:5, font: "Times New Roman", size: 14,  color: 0x000099, bold:true, html:true}); &lt;/code&gt;</description>
+          <attributes>
+            <attribute value="public" />
+            <attribute value="static" />
+          </attributes>
+          <commentTags>
+            <commentTag name="summary">Show the Tooltip after a delay &lt;br&gt;
+Example 1: (No options) &lt;br&gt;
+&lt;code&gt;Tooltip.show ("Here is some example text for the static tooltip class"); &lt;/code&gt;&lt;br&gt;
+Example 2: (One option) &lt;br&gt;
+&lt;code&gt;Tooltip.show ("Here is some example text for the static tooltip class", {delay: 0}); &lt;/code&gt;&lt;br&gt;
+Example 3: (Many options)&lt;br&gt;
+&lt;code&gt;Tooltip.show ("Here is some example text for the static tooltip class", {delay:1, width:300, bgColor:0xFFFFFF, alpha:80, corner: 10, margiin:5, font: "Times New Roman", size: 14,  color: 0x000099, bold:true, html:true}); &lt;/code&gt;</commentTag>
+            <commentTag name="param" ref="tipText">text to display</commentTag>
+            <commentTag name="param" ref="options">Use to temporarily override the default/global options</commentTag>
+          </commentTags>
+          <params>
+            <param name="tipText" type="String" fullType="String" />
+            <param name="options" type="Object" fullType="Object" />
+          </params>
+        </method>
+        <method name="setOption" type="Void" fullType="Void">
+          <description>Use to change a single default option globally .</description>
+          <attributes>
+            <attribute value="public" />
+            <attribute value="static" />
+          </attributes>
+          <commentTags>
+            <commentTag name="summary">Use to change a single default option globally .</commentTag>
+            <commentTag name="param" ref="optionName">The property name of the option.</commentTag>
+            <commentTag name="param" ref="optionValue">The new value for the option.</commentTag>
+          </commentTags>
+          <params>
+            <param name="optionName" type="String" fullType="String" />
+            <param name="optionValue" type="Object" fullType="Object" />
+          </params>
+        </method>
+        <method name="hide" type="Void" fullType="Void">
+          <description>Destroy or hide the Tooltip - if DepthManager is present, than the tooltip will be hidden.&lt;br&gt;
+example: &lt;code&gt;Tooltip.hide()&lt;/code&gt;</description>
+          <attributes>
+            <attribute value="public" />
+            <attribute value="static" />
+          </attributes>
+          <commentTags>
+            <commentTag name="summary">Destroy or hide the Tooltip - if DepthManager is present, than the tooltip will be hidden.&lt;br&gt;
+example: &lt;code&gt;Tooltip.hide()&lt;/code&gt;</commentTag>
+          </commentTags>
+          <params />
+        </method>
+      </methods>
+    </class>
+  </classes>
+</docs>
