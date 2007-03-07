@@ -1,0 +1,46 @@
+<html xmlns:fo="http://www.w3.org/1999/XSL/Format"><head><title>com.neoarchaic.ui.Tooltip Class</title><link rel="stylesheet" type="text/css" href="../../../../docs.css"></link></head><body><h1>Tooltip Class</h1><p><b>Class </b>com.neoarchaic.ui.Tooltip</p><p><b>Inheritance </b>
+			
+			&gt;
+			
+		<a href="Class.htm">Tooltip</a></p><div class="description">A Customizable static class for generating and displaying Tooltips from anywhere in your code.<br>
+Must reside in a folder structure corresponding to the package: com.neoarchaic.ui.  There are no assests for the library, since the tooltip is created and drawn dynamically.<br>
+<br /><br />
+The tooltip is created by invoking the static Tooltip class methods: Tooltip.show() and Tooltip.hide() (see method documentation for each method). <br>
+<br /><br />
+This tooltip supports html and will use CSS to style the text, if the html option is set to true. The passed toolitp text will then be automatically enclosed in a <body> tag. The default value for the html option is false.
+<br /><br />
+You can customize the tool both globally and locally.<br>
+Globally: Set options one at a time by using the static setOption () method. <br>
+To set multiple options in one go, set the public "options" property to an object containing one or more options (see example). <br>
+Locally: Pass an object with the options to the static Tooltip.show () method.
+In either case, only the options that have default values will be used, the rest will be ignored.
+<br /><br />
+<b>Examples:</b><br>
+<code>
+import ui.Tooltip; <br>
+Tooltip.options = {html: true, width: 300}<br>
+Tooltip.setOption("delay", 1) <br>
+Tooltip.show("Hi, I'm a tooltip. \nI can have multiple lines and I also wrap around") <br>
+Tooltip.show("Hi, I'm a delayed tooltip.", {delay: 2}) <br>
+Tooltip.hide() <br>
+</code>
+<br /><br />
+<b>Author:</b><br>
+Karina Steffens <br>
+Neo-Archaic </br>
+<a href = "http://www.neo-archaic.net" target = "_blank"> www.neo-archaic.net </a> <br>
+February 2005</div><table border="1" cellpadding="2" cellspacing="0"><tr><th colspan="2" class="ObjectsSummaryHeading">Property Summary</th></tr><tr><td valign="top" width="1%"><span class="Attributes">&nbsp;static&nbsp;</span><span class="type">Object</span>&nbsp;</td><td valign="top"><div class="functionNameAndParams">&nbsp;<a href="#options">options</a></div><div class="functionSummaryLine">Use to change multiple default options globally</div></td></tr></table><table border="1" cellpadding="2" cellspacing="0"><tr><th colspan="2" class="ObjectsSummaryHeading">Method Summary</th></tr><tr><td valign="top" width="1%"><span class="Attributes">&nbsp;static&nbsp;</span><span class="type">Void</span>&nbsp;</td><td valign="top"><div class="functionNameAndParams">&nbsp;<a href="#hide">hide</a>()</div><div class="functionSummaryLine">Destroy or hide the Tooltip - if DepthManager is present, than the tooltip will be hidden.<br>
+example: <code>Tooltip.hide()</code></div></td></tr><tr><td valign="top" width="1%"><span class="Attributes">&nbsp;static&nbsp;</span><span class="type">Void</span>&nbsp;</td><td valign="top"><div class="functionNameAndParams">&nbsp;<a href="#setOption">setOption</a>(optionName:String, optionValue:Object)</div><div class="functionSummaryLine">Use to change a single default option globally .</div></td></tr><tr><td valign="top" width="1%"><span class="Attributes">&nbsp;static&nbsp;</span><span class="type">Void</span>&nbsp;</td><td valign="top"><div class="functionNameAndParams">&nbsp;<a href="#show">show</a>(tipText:String, options:Object)</div><div class="functionSummaryLine">Show the Tooltip after a delay <br>
+Example 1: (No options) <br>
+<code>Tooltip.show ("Here is some example text for the static tooltip class"); </code><br>
+Example 2: (One option) <br>
+<code>Tooltip.show ("Here is some example text for the static tooltip class", {delay: 0}); </code><br>
+Example 3: (Many options)<br>
+<code>Tooltip.show ("Here is some example text for the static tooltip class", {delay:1, width:300, bgColor:0xFFFFFF, alpha:80, corner: 10, margiin:5, font: "Times New Roman", size: 14,  color: 0x000099, bold:true, html:true}); </code></div></td></tr></table><table border="1" cellpadding="2" cellspacing="0"><tr><th class="ObjectsDetailHeading">Property Detail</th></tr></table><div class="DetailRow"><a name="options"></a><div class="DetailObjectTitle">options</div><div class="DetailObjectDeclaration">public static function get/set options():Object</div><div class="DetailDescription">Use to change multiple default options globally</div><div class="DetailParamsTitle">Parameters:</div><div class="DetailParamsLine"><code>options:Object</code> - <b>An object with the following optional properties:</b></div><div class="DetailParamsLine"><code>options.delay:Number</code> - delay in seconds (default: 0.5 second)</div><div class="DetailParamsLine"><code>options.width:Number</code> - maximum width of the tooltip window (default: 200px)</div><div class="DetailParamsLine"><code>options.bgColor:Color</code> - Background color of the tooltip (default: 0xFFFFDD - light yellow)</div><div class="DetailParamsLine"><code>options.alpha:Number</code> - Transparency of the tooltip (default: 85)</div><div class="DetailParamsLine"><code>optoins.corner:Number</code> - The diameter for the rounded corner (default: 5, for sharp corners pass 0)</div><div class="DetailParamsLine"><code>options.margin:Number</code> - (default: 2);</div><div class="DetailParamsLine"><code>options.font:String</code> - (default: "Verdana")</div><div class="DetailParamsLine"><code>options.color:Color</code> - Text and line color (default 0xFFFFFF)</div><div class="DetailParamsLine"><code>options.size:Number</code> - Font size (default: 10)</div><div class="DetailParamsLine"><code>options.bold:Boolean</code> - (default: false)</div><div class="DetailParamsLine"><code>options.html:Boolean</code> - (default: true)</div></div><table border="1" cellpadding="2" cellspacing="0"><tr><th class="ObjectsDetailHeading">Method Detail</th></tr></table><div class="DetailRow"><a name="hide"></a><div class="DetailObjectTitle">hide</div><div class="DetailObjectDeclaration">public static function  hide():Void</div><div class="DetailDescription">Destroy or hide the Tooltip - if DepthManager is present, than the tooltip will be hidden.<br>
+example: <code>Tooltip.hide()</code></div></div><div class="DetailRow"><a name="setOption"></a><div class="DetailObjectTitle">setOption</div><div class="DetailObjectDeclaration">public static function  setOption(optionName:String, optionValue:Object):Void</div><div class="DetailDescription">Use to change a single default option globally .</div><div class="DetailParamsTitle">Parameters:</div><div class="DetailParamsLine"><code>optionName</code> - The property name of the option.</div><div class="DetailParamsLine"><code>optionValue</code> - The new value for the option.</div></div><div class="DetailRow"><a name="show"></a><div class="DetailObjectTitle">show</div><div class="DetailObjectDeclaration">public static function  show(tipText:String, options:Object):Void</div><div class="DetailDescription">Show the Tooltip after a delay <br>
+Example 1: (No options) <br>
+<code>Tooltip.show ("Here is some example text for the static tooltip class"); </code><br>
+Example 2: (One option) <br>
+<code>Tooltip.show ("Here is some example text for the static tooltip class", {delay: 0}); </code><br>
+Example 3: (Many options)<br>
+<code>Tooltip.show ("Here is some example text for the static tooltip class", {delay:1, width:300, bgColor:0xFFFFFF, alpha:80, corner: 10, margiin:5, font: "Times New Roman", size: 14,  color: 0x000099, bold:true, html:true}); </code></div><div class="DetailParamsTitle">Parameters:</div><div class="DetailParamsLine"><code>tipText</code> - text to display</div><div class="DetailParamsLine"><code>options</code> - Use to temporarily override the default/global options</div></div><br /><br /><hr /><span style='font-size: x-small; font-family: Verdana, Arial'>Documentation generated by <a href='http://wwww.blinex.com/products/bldoc' target='_blank' alt='BLDoc Link'>BLDoc Community Edition</a> from <a href='http://www.blinex.com' target='_blank' alt='B-Line Express Website'>B-Line Express</a>.</body></html>
