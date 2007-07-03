@@ -1,0 +1,62 @@
+/* CSS file */
+
+Application { 
+   backgroundColor: #3366cc;
+   backgroundGradientColors: #336699, #ffffff;
+   backgroundGradientAlphas: 0.84, 0.77;
+   themeColor: #3366cc;
+}
+
+DataGrid {
+   backgroundAlpha: 0.22;
+   alternatingItemColors: #ffffff, #cccccc;
+   headerColors: #ffffff, #99ccff;
+   horizontalGridLines: true;
+   horizontalGridLineColor: #000000;
+   rollOverColor: #ffffff;
+   selectionColor: #99ccff;
+}
+	
+Tree {
+   backgroundAlpha: 0;
+   rollOverColor: #aadeff;
+   selectionColor: #99ccff;
+}
+
+.videoPanel 
+{ 
+	cornerRadius: 8;
+	headerHeight: 20;
+	dropShadowEnabled: true;
+	roundedBottomCorners: true;
+	backgroundAlpha: 1;
+} 
+	
+Panel { 
+   cornerRadius: 8;
+   headerHeight: 28;
+   dropShadowEnabled: true;
+   roundedBottomCorners: true;
+   backgroundAlpha: 1;
+   backgroundColor: #ffffff;
+} 
+	
+LinkBar { 
+   horizontalGap: 0;
+   separatorWidth: 0;
+   borderStyle: none;
+   cornerRadius: 4;
+   separatorColor: #cccccc;
+   rollOverColor: #336699;
+   textRollOverColor: #ffffff;
+   disabledColor: #ffffff;
+}
+
+VScrollBar { 
+   themeColor: #0066cc;
+   trackColors: #999999, #ffffff;
+}
+HScrollBar { 
+   themeColor: #0066cc;
+   trackColors: #999999, #ffffff;
+}

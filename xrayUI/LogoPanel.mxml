@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="390" height="270">
+
+<mx:Image source="@Embed('assets/XrayLogo_animated.swf')" horizontalCenter="0" verticalCenter="0"/>
+
+
+</mx:Canvas>

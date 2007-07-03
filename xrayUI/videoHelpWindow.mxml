@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+	layout="vertical" showCloseButton="true" 
+	horizontalAlign="center" verticalAlign="middle" 
+	close="removeMe()"
+	borderAlpha=".50"
+	dropShadowEnabled="true"
+	roundedBottomCorners="true"
+	mouseDown="if(!scrubbing) startDrag()"
+	click="stopDrag()"
+	visible="true" backgroundColor="#003366" backgroundAlpha=".22" color="#ffffff" fontWeight="bold">
+	<mx:Script>
+		<![CDATA[
+			import mx.core.Application;
+			import mx.managers.PopUpManager;
+			import com.blitzagency.xray.ui.OutputTools;
+			import flash.events.ProgressEvent;
+			import flash.events.Event;
+			import mx.events.MetadataEvent; 
+			import com.blitzagency.util.LSOUserPreferences;
+			
+			[Bindable]
+			public var flvPath:String = "";
+			
+			[Bindable]
+			private var metaData:Object = {duration:0};
+			
+			public var scrubbing:Boolean = false;
+			
+			public function removeMe():void
+			{
+				try
+				{
+					if(videoPlayer.bytesLoaded > 12) videoPlayer.stop();
+				}catch (error:ArgumentError) 
+		        {
+		        	//OutputTools.tt(["Error in closing videoDisplay's ns", error]);
+		        }	
+				PopUpManager.removePopUp(this);
+			}
+			
+			/*
+			public function removeProgressBar(event:Event):void
+			{
+				progressBar.visible = false;
+			}
+			*/
+			
+			public function updateScrubBar(event:Event):void
+			{
+				if(!scrubbing) scrubBar.value = videoPlayer.playheadTime;
+			}
+			
+			public function updateVolume(event:Event):void
+			{
+				videoPlayer.volume = (volumeSlider.value) * .01;
+				LSOUserPreferences.setPreference("videoHelpVolume", videoPlayer.volume, true);
+			}
+			
+			public function scrubVideo(event:Event):void
+			{
+				videoPlayer.playheadTime = scrubBar.value;
+				scrubbing=false;
+			}
+			
+			public function setMetaData(event:MetadataEvent):void
+			{
+				metaData = event.info;
+				// size
+				videoPlayer.width = metaData.width;
+				videoPlayer.height = metaData.height;
+				// set volume
+				var vol:Number = Number(LSOUserPreferences.getPreference("videoHelpVolume"));
+				videoPlayer.volume = vol ? vol : 0.75;
+				volumeSlider.value = (videoPlayer.volume) * 100;
+				//OutputTools.tt(["setMetaData", metaData, videoPlayer.volume]);
+			}
+		]]>
+	</mx:Script>
+	<!--metadataReceived="setMetaData(event)" -->
+	<mx:VideoDisplay playheadUpdate="updateScrubBar(event)" 
+						
+						x="0" top="100" width="650" height="500" 
+						mouseDown="mx.core.Application.application.startDrag()"
+						click="mx.core.Application.application.stopDrag()"
+						id="videoPlayer" 
+						autoPlay="true" source="{flvPath}" maintainAspectRatio="true"/>	
+	<mx:ApplicationControlBar width="100%" height="42">
+		<mx:Button label="play" x="292.5" y="0" id="playBtn" click="videoPlayer.play();"/>
+		<mx:Button label="pause" x="350.5" y="0" id="pauseBtn" click="videoPlayer.pause();"/>
+		<mx:Button label="stop" x="418.5" y="0" id="stopBtn" click="videoPlayer.stop();"/>
+		<mx:HSlider thumbPress="scrubbing=true" click="scrubVideo(event)" width="100%" minimum="0" maximum="{metaData.duration}" snapInterval="1" enabled="true" id="scrubBar" liveDragging="true" showDataTip="true" height="20"/>
+		<mx:HSlider thumbPress="scrubbing=true" click="scrubbing=false;" thumbRelease="scrubbing=false" thumbDrag="updateVolume(event);" width="78" height="20" id="volumeSlider" minimum="0" maximum="100" snapInterval="1" enabled="true"  liveDragging="true"/>
+		<mx:Label text="Vol."/>
+		<!--<mx:ProgressBar labelPlacement="right" id="progressBar" source="videoPlayer" complete="removeProgressBar(event)"/>-->
+	</mx:ApplicationControlBar>
+</mx:TitleWindow>
