@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="30" creationComplete="initPanel()" backgroundColor="#f2f2f2" backgroundAlpha="1">
+<mx:Script>
+	<![CDATA[ 
+		import com.blitzagency.xray.ui.ExecuteConnection;
+		import com.blitzagency.xray.events.PropertyToolEvent;
+		import com.blitzagency.xray.events.TreeToolsEvent;
+		import com.blitzagency.xray.ui.TreeTools;
+		import com.blitzagency.xray.ui.PropertyTools;
+		import com.blitzagency.xray.ui.OutputTools;
+		import com.blitzagency.util.LSOUserPreferences;
+		
+		private var app:Object = mx.core.Application.application;
+		private var ec:ExecuteConnection;
+		private var currentAxis:String;
+		private var currentPath:String;
+		
+		
+		private function initPanel():void
+		{
+			//OutputTools.tt(["initPanel", PropertyTools.instance.addEventListener]); 
+			ec = app.ec;
+			PropertyTools.instance.addEventListener(PropertyToolEvent.AXIS_EDIT, axisEdit);
+			TreeTools.instance.addEventListener(TreeToolsEvent.TREEVIEW_CLICK, treeviewClickHandler);
+		}
+		
+		public function registerEC(p_ec:ExecuteConnection):void
+		{
+			ec = p_ec; 
+		}
+		
+		public function axisEdit(evtObj:PropertyToolEvent):void
+		{
+			//OutputTools.tt(["axisEdit event received", evtObj.path, evtObj.prop, evtObj.value]);
+						
+			if(evtObj.prop == "_width" || evtObj.prop == "_height")
+			{
+				currentAxis = evtObj.prop == "_width" ? "_x" : "_y";
+				var obj:Object = PropertyTools.getProperty(currentAxis)
+				var position:Number = Number(obj.value) + Number(evtObj.value);
+				gridLinePosition.text = String(position); 
+				//OutputTools.tt(["width/height received", PropertyTools.getProperty(currentAxis)])
+				//gridLinePosition.text = evtObj.value;
+			}else
+			{
+				currentAxis = evtObj.prop;
+				gridLinePosition.text = evtObj.value;
+			}
+			
+			xAxis.selected = currentAxis == "_x" ? true : false;
+			
+			// strip off property value, save target path
+			var ary:Array = evtObj.path.split(".");
+			ary.pop();
+			setCurrentPath(ary.join("."));
+		}
+		
+		public function treeviewClickHandler(evtObj:TreeToolsEvent):void
+		{
+			//OutputTools.tt(["treeviewClickHandler", evtObj]);
+			setCurrentPath(evtObj.path);
+		}
+		
+		public function setCurrentPath(p_currentPath:String):void
+		{
+			currentPath = p_currentPath;
+			
+			// if color was chosen for this object, reset it.
+			lineColor.selectedColor = Number(LSOUserPreferences.getPreference(currentPath + "_lineColor"));	
+		}
+		
+		public function drawGridLine():void
+		{
+			var axis:String = xAxis.selected ? "_x" : "_y";
+			if(gridLinePosition.text != "") ec.drawGridLine(currentPath, axis, Number(gridLinePosition.text), lineColor.selectedColor); 
+		}
+		
+		public function removeLastGridLine():void
+		{
+			ec.removeLastGridLine();
+		}
+		
+		public function clearObjectGridLines():void
+		{
+			//OutputTools.tt(["clearObjectGridLines", currentPath])
+			ec.clearObjectGridLines(currentPath);
+		}
+		
+		public function clearAllGridLines():void
+		{
+			ec.clearAllGridLines();
+		}
+		
+		private function colorChange(event:Event):void
+		{
+			LSOUserPreferences.setPreference(currentPath + "_lineColor", lineColor.selectedColor, true);
+		}
+		
+	]]>
+</mx:Script>
+	<mx:TextInput y="4" width="51" id="gridLinePosition" left="6"/>
+	<mx:Button y="4" id="addGridLine" left="65" icon="@Embed('assets/icons/add.png')" width="32" click="drawGridLine()">
+		<mx:toolTip>Add Grid Line at the coordinates and axis specified</mx:toolTip>
+	</mx:Button>
+	<mx:CheckBox y="7" label="X Axis?" id="xAxis" left="108" toolTip="If checked, you'll see a vertical line positioned on the X axis at the coordinate you type into the text box to the left.  This is relative to the movieclip/button/textfield you have selected in the treeview"/>
+	<mx:Button x="209" y="4" icon="@Embed('assets/icons/arrow_undo.png')" width="32" toolTip="Undo" click="removeLastGridLine()"/>
+	<mx:Button x="249" y="4" icon="@Embed('assets/icons/delete.png')" width="32" toolTip="Clear all grid lines for this object" id="clearGridLinesObject" click="clearObjectGridLines()"/>
+	<mx:Button x="289" y="4" icon="@Embed('assets/icons/exclamation.png')" width="32" toolTip="Clear all gridlines" id="clearGridLinesAll" click="clearAllGridLines()"/>
+	<mx:ColorPicker x="175" y="4" id="lineColor" selectedColor="#00ff00" change="colorChange(event)" toolTip="Select a line color"/>
+</mx:Canvas>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas  initialize="startTimer()" width="670" height="372" xmlns:mx="http://www.adobe.com/2006/mxml">
+	
+	<mx:Script>
+		<![CDATA[
+			import com.blitzagency.util.LSOUserPreferences;
+			import mx.managers.PopUpManager;
+			import flash.utils.*;
+			
+			public function removeMe():void
+			{	
+				PopUpManager.removePopUp(this);
+			}
+			
+			public function startTimer():void
+			{
+				setTimeout(removeMe, 7000);
+			}
+			
+			public function hideForever():void
+			{
+				LSOUserPreferences.setPreference("showSplash", false, true);
+				removeMe();
+			}
+		]]>
+	</mx:Script>
+	<mx:SWFLoader id="splash" source="@Embed('assets/BlitzSplashScreen.swf')" scaleContent="false"/>
+	<mx:CheckBox label="Don't Show Again" y="339" right="10" id="hidePanel" click="hideForever()"/>
+	
+</mx:Canvas>

@@ -1,0 +1,747 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:logViewer="com.roguedevelopment.logviewer.*" 
+	xmlns:ns1="*"
+	currentStateChange="stateChangeCleanup()" 
+	layout="absolute" 
+	applicationComplete="initApp()"
+	keyDown="trapKeys(event)"
+	keyUp="trapKeys(event)"
+	horizontalAlign="center" 
+	verticalAlign="middle" 
+	width="100%" 
+	height="100%" 
+	frameRate="30" 
+	viewSourceURL="srcview/index.html">
+	<mx:Style source="assets/themes/Institutional.css" />
+	<mx:states>
+		<mx:State name="stringNumericEdit" enterState="setPropertyListeners('stringNumericEdit')">
+			<mx:AddChild relativeTo="{propertyInspector}" position="before">
+				<mx:ApplicationControlBar width="100%">
+					<mx:TextInput width="100%" text="{propertyInspector.selectedItem.value}" id="editValueStringNumeric" editable="true"/>
+					<mx:Button label="update" id="updateStringNumeric"/>
+				</mx:ApplicationControlBar>
+			</mx:AddChild>
+		</mx:State>
+		<mx:State name="stringNumericEditSlider" enterState="setPropertyListeners('stringNumericEditSlider')">
+			<mx:AddChild relativeTo="{propertyInspector}" position="before">
+				<mx:ApplicationControlBar width="100%" id="applicationcontrolbar2">
+					<mx:Canvas width="100%" height="24" id="canvas1">
+						<mx:TextInput width="99" text="{propertyInspector.selectedItem.value}" id="editValueStringNumericSliderText" editable="true" x="0" y="0" color="#00356a"/>
+						<mx:HSlider liveDragging="true" id="editValueStringNumericSliderSlider" y="6" left="110" right="76" snapInterval=".05"/>
+						<mx:Button label="update" id="updateStringNumericSlider" y="0" right="2"/>
+					</mx:Canvas>
+				</mx:ApplicationControlBar>
+			</mx:AddChild>
+		</mx:State>
+		<mx:State name="timelineController" basedOn="stringNumericEditSlider" enterState="setPropertyListeners('timelineController')">
+			<mx:SetStyle target="{editValueStringNumericSliderSlider}" name="left" value="384"/>
+			<mx:SetStyle target="{updateStringNumericSlider}" name="right"/>
+			<mx:SetProperty target="{editValueStringNumericSliderText}" name="x"/>
+			<mx:AddChild relativeTo="{canvas1}" position="lastChild">
+				<mx:Label y="3" text="Frame#/Label" left="0" color="#ffffff" fontWeight="bold"/>
+			</mx:AddChild>
+			<mx:AddChild relativeTo="{canvas1}" position="lastChild">
+				<mx:CheckBox id="gotoAndStop" y="3" label="gotoAndStop?" left="206" color="#ffffff"/>
+			</mx:AddChild>
+			<mx:SetProperty target="{updateStringNumericSlider}" name="width" value="58"/>
+			<mx:AddChild relativeTo="{canvas1}" position="lastChild">
+				<mx:VRule y="1" height="20" left="372" width="2"/>
+			</mx:AddChild>
+			<mx:SetStyle target="{updateStringNumericSlider}" name="left" value="307"/>
+			<mx:SetStyle target="{editValueStringNumericSliderText}" name="left" value="99"/>
+			<mx:SetProperty target="{editValueStringNumericSliderSlider}" name="y" value="4"/>
+			<mx:SetProperty target="{editValueStringNumericSliderSlider}" name="allowTrackClick" value="true"/>
+			<mx:SetProperty target="{editValueStringNumericSliderSlider}" name="snapInterval" value="1"/>
+		</mx:State>
+		<mx:State name="BlurFilter">
+			<mx:AddChild relativeTo="{canvas2}" position="lastChild">
+				<mx:HSlider x="6" y="32" id="blurX" width="100%" minimum="0" maximum="100" snapInterval="1" thumbDrag="FilterTools.updateFilter()" liveDragging="true" value="5"/>
+			</mx:AddChild>
+			<mx:AddChild relativeTo="{canvas2}" position="lastChild">
+				<mx:Label y="13" text="Blur X" left="10"/>
+			</mx:AddChild>
+			<mx:AddChild relativeTo="{canvas2}" position="lastChild">
+				<mx:HSlider x="6" y="81" width="100%" id="blurY" minimum="0" maximum="100" snapInterval="1" thumbDrag="FilterTools.updateFilter()" liveDragging="true" value="5"/>
+			</mx:AddChild>
+			<mx:AddChild relativeTo="{canvas2}" position="lastChild">
+				<mx:Label y="64" text="Blur Y" left="10"/>
+			</mx:AddChild>
+			<mx:AddChild relativeTo="{canvas2}" position="lastChild">
+				<mx:HSlider x="6" y="127" width="100%" id="quality" minimum="0" maximum="15" snapInterval="1" value="3" thumbDrag="FilterTools.updateFilter()" liveDragging="true"/>
+			</mx:AddChild>
+			<mx:AddChild relativeTo="{canvas2}" position="lastChild">
+				<mx:Label y="110" text="Quality" left="10">
+					<mx:toolTip>Quality is 0 - 15.  3 is usually considered enough and represents the "high" setting in the Flash IDE</mx:toolTip>
+				</mx:Label>
+			</mx:AddChild>
+			<mx:SetProperty target="{filterChoice}" name="width"/>
+			<mx:AddChild relativeTo="{applicationcontrolbar1}" position="lastChild">
+				<mx:Button label="Apply" id="applyFilter" width="47" click="FilterTools.updateFilter()">
+					<mx:toolTip>Apply to the selected Movieclip/Textfield on stage</mx:toolTip>
+				</mx:Button>
+			</mx:AddChild>
+			<mx:AddChild relativeTo="{applicationcontrolbar1}" position="lastChild">
+				<mx:Button label="Code" id="showFilterCode" width="49" click="FilterTools.showCode()">
+					<mx:toolTip>Show Code in Output panel.  You can copy and paste this into your Flash application for runtime filters</mx:toolTip>
+				</mx:Button>
+			</mx:AddChild>
+		</mx:State>
+		<mx:State name="GlowFilter" basedOn="BlurFilter">
+			<mx:AddChild relativeTo="{canvas2}" position="lastChild">
+				<mx:HSlider x="6" y="173" id="strength" width="100%" minimum="0" maximum="255" snapInterval=".01" value="2" thumbDrag="FilterTools.updateFilter()" liveDragging="true"/>
+			</mx:AddChild>
+			<mx:AddChild relativeTo="{canvas2}" position="lastChild">
+				<mx:Label y="156" text="Strength" left="10"/>
+			</mx:AddChild>
+			<mx:AddChild relativeTo="{canvas2}" position="lastChild">
+				<mx:ColorPicker x="51" y="264" id="clr" enabled="true" change="FilterTools.updateFilter()"/>
+			</mx:AddChild>
+			<mx:AddChild relativeTo="{canvas2}" position="lastChild">
+				<mx:Label y="264" text="Color" left="10" id="label1"/>
+			</mx:AddChild>
+			<mx:AddChild relativeTo="{canvas2}" position="lastChild">
+				<mx:HSlider x="6" y="219" width="100%" id="alphaValue" minimum=".0" maximum="1" snapInterval=".01" thumbDrag="FilterTools.updateFilter()" liveDragging="true" value=".65"/>
+			</mx:AddChild>
+			<mx:AddChild relativeTo="{canvas2}" position="lastChild">
+				<mx:Label y="203" text="Alpha" left="10"/>
+			</mx:AddChild>
+			<mx:AddChild relativeTo="{canvas2}" position="lastChild">
+				<mx:CheckBox y="254" label="Knockout" id="knockout" click="FilterTools.updateFilter()" right="35"/>
+			</mx:AddChild>
+			<mx:AddChild relativeTo="{canvas2}" position="lastChild">
+				<mx:CheckBox y="280" label="Inner Shadow" id="innerShadow" click="FilterTools.updateFilter()" right="10"/>
+			</mx:AddChild>
+			
+			<!--
+			<mx:SetStyle target="{showFilterCode}" name="bottom"/>
+			<mx:SetStyle target="{applyFilter}" name="bottom"/>
+			<mx:SetProperty target="{showFilterCode}" name="y" value="297"/>
+			<mx:SetProperty target="{applyFilter}" name="y" value="297"/>
+			-->
+		</mx:State>
+		<mx:State name="DropShadowFilter" basedOn="GlowFilter">
+			<mx:AddChild relativeTo="{canvas2}" position="lastChild">
+				<mx:CheckBox y="386" label="Hide Object" id="hideObject" click="FilterTools.updateFilter()" right="18"/>
+			</mx:AddChild>
+			<mx:SetProperty target="{label1}" name="y" value="356"/>
+			<mx:SetStyle target="{label1}" name="left" value="9"/>
+			<mx:SetProperty target="{clr}" name="x" value="51"/>
+			<mx:SetProperty target="{clr}" name="y" value="352"/>
+			<mx:SetProperty target="{knockout}" name="y" value="340"/>
+			<mx:SetProperty target="{innerShadow}" name="y" value="362"/>
+			<mx:AddChild relativeTo="{canvas2}" position="lastChild">
+				<mx:HSlider x="6" y="263" width="100%" id="angle" minimum="0" maximum="360" snapInterval="1" value="45" thumbDrag="FilterTools.updateFilter()" liveDragging="true"/>
+			</mx:AddChild>
+			<mx:AddChild relativeTo="{canvas2}" position="lastChild">
+				<mx:Label y="251" text="Angle" left="10"/>
+			</mx:AddChild>
+			<mx:AddChild relativeTo="{canvas2}" position="lastChild">
+				<mx:HSlider x="6" y="314" width="100%" minimum="0" maximum="100" snapInterval="1" value="4" id="distance" thumbDrag="FilterTools.updateFilter()" liveDragging="true"/>
+			</mx:AddChild>
+			<mx:AddChild relativeTo="{canvas2}" position="lastChild">
+				<mx:Label y="298" text="Distance" left="10"/>
+			</mx:AddChild>
+			<mx:SetStyle target="{knockout}" name="right" value="31"/>
+			<mx:SetProperty target="{input}" name="toolTip">
+				<mx:value>You can trace any property at runtime - anything from simple properties to complex objects.  You can also execute custom actionscript that's not compiled with your swf through this panel.</mx:value>
+			</mx:SetProperty>
+			<mx:SetProperty target="{getSnapShot}" name="toolTip" value="Take a snapshot"/>
+			<mx:SetProperty target="{clearOutput}" name="toolTip" value="Clear output"/>
+			<mx:SetProperty target="{acceptOutput}" name="toolTip">
+				<mx:value>Check whether or not you want to receive trace information</mx:value>
+			</mx:SetProperty>
+			<mx:SetProperty target="{historyBack}" name="toolTip">
+				<mx:value>Go back to the last object in the property inspector</mx:value>
+			</mx:SetProperty>
+			<mx:SetProperty target="{fpsMeter}" name="toolTip" value="Current Frames Per Second Avg."/>
+			<mx:SetStyle target="{innerShadow}" name="right" value="6"/>
+			
+			<!--
+			<mx:SetProperty target="{showFilterCode}" name="y" value="420"/>
+			<mx:SetProperty target="{applyFilter}" name="y" value="420"/>
+			<mx:SetProperty target="{showFilterCode}" name="x"/>
+			<mx:SetStyle target="{showFilterCode}" name="right" value="10"/>
+			<mx:SetProperty target="{applyFilter}" name="x"/>
+			<mx:SetStyle target="{applyFilter}" name="right" value="92"/>
+			-->
+		</mx:State>
+	</mx:states>
+	
+	<mx:Script>
+		<![CDATA[			
+			
+			import mx.messaging.management.Attribute;
+			import mx.collections.ArrayCollection;
+			import mx.validators.ValidationResult;
+			import mx.managers.ToolTipManager;
+			import mx.events.ListEvent;
+			import mx.controls.Text;
+			import mx.managers.PopUpManager;
+			import mx.core.ScrollPolicy;
+			import mx.collections.ArrayCollection;
+			
+			import flash.text.TextField;
+			import flash.net.ObjectEncoding;
+			import flash.net.LocalConnection;
+						
+			import com.blitzagency.xray.ui.PropertyTools;
+			import com.blitzagency.xray.ui.PropertyFactory;
+			import com.blitzagency.xray.ui.ExecuteConnection;
+			import com.blitzagency.xray.ui.InputTools;
+			import com.blitzagency.util.LSOUserPreferences;
+			import com.blitzagency.xray.ui.FilterTools;
+			import com.blitzagency.xray.ui.LoggerConnection;
+			import com.blitzagency.xray.ui.TreeTools;
+			import com.blitzagency.xray.ui.OutputTools;
+			import com.blitzagency.xray.ui.PropertyFactory;
+			import com.blitzagency.xray.ui.SoundTools;
+			import com.blitzagency.xray.ui.VideoTools;
+			import com.blitzagency.xray.ui.XrayHelp;
+			
+			
+			/*testing*/
+			/*
+			import flash.ui.ContextMenu;
+		    import flash.ui.ContextMenuItem;
+		    import flash.events.ContextMenuEvent;
+		    import flash.events.ContextMenuEvent;
+		    */
+			[Embed(source="assets/icons/sound.png")]
+	        public var iconSound:Class;
+	        
+	        [Embed(source="assets/icons/movieclip.png")]
+	        public var iconMovieclip:Class;
+	        
+	        [Embed(source="assets/icons/button.png")]
+	        public var iconButton:Class;
+	        
+	        [Embed(source="assets/icons/video.png")]
+	        public var iconVideo:Class;
+	        
+	        [Embed(source="assets/icons/folder.png")]
+	        public var iconFolder:Class;
+	        
+	        [Embed(source="assets/icons/document.png")]
+	        public var iconDocument:Class;
+	        
+	        [Embed(source="assets/BlitzLogo.png")]
+	        public var blitzLogoImage:Class;
+				
+			
+			// public properties
+			public var lc:LoggerConnection;
+			public var ec:ExecuteConnection;
+			public var recursionControl:Number = 0;
+			public var currentConnectorVersion:String = "1.6.3";
+			public var shiftKeyDown:Boolean = false;
+			public var logLevel:Object = 0;
+			//public var customContextMenu:ContextMenu;
+			
+			[Bindable]
+			public var currentToolTip:String = "";
+			
+			[Bindable]
+			public var currentFunctionCall:String = "";
+			
+			// this is the property bound to the treeview to force it to initialize
+			[Bindable]
+			public var treeData:XMLList = new XMLList();
+			
+			[Bindable]
+			public var videoPlayerURL:String = "";
+			
+			// private properties
+			private var xmlDoc:XML;
+			
+			private var baseURL:String = "http://www.rockonflash.com/xray/flex/";
+			
+			private var helpList:Array=[
+				{label: "Xray Basics", tooltip: "Basics of how to work with Xray.  Snapshots and property inspector.", data: baseURL + "assets/videos/XrayBasics.flv", image: baseURL + "assets/images/XrayBasics.png"},
+				{label: "Trace / Execute", tooltip: "Learn about the trace and execute panel.  Execute code at runtime that's not compiled with your SWF, and write custom trace statements.",  data: baseURL + "assets/videos/TraceExecute.flv", image: baseURL + "assets/images/TraceExecute.png"},
+				{label: "Filters Basics", tooltip: "Learn about using flash 8 filters at runtime with your SWF.  Then, generate code you can copy/paste into your application",  data: baseURL + "assets/videos/FiltersBasics.flv", image: baseURL + "assets/images/FiltersBasics.png"},
+				{label: "Sound Basics", tooltip: "Learn about controlling sound objects you've created with the Sound Object in your SWF.  Pan, scrub and play with volume.",  data: baseURL + "assets/videos/SoundBasics.flv", image: baseURL + "assets/images/SoundBasics.png"},
+				{label: "Video Basics", tooltip: "Learn about controlling NetStream objects with streaming FLV's.  Scrub, play, pause and stop to test your application.",  data: baseURL + "assets/videos/VideoBasics.flv", image: baseURL + "assets/images/VideoBasics.png"},
+				{label: "Runtime Grid Lines & Edit Tool",tooltip: "Having a hard time with coordinate conversions?  Need to see where 305.55 on the x axis is at runtime? Need to rotate, scale and move items on stage? Check these new tools out!.",  data: baseURL + "assets/videos/GridLines_EditTool.flv", image: baseURL + "assets/images/GridLines_EditTool.png"},
+				{label: "Excute Panel: Method calls & timeline debugging",tooltip: "You can't figure out why a movieclip didn't play or a method didn't get called?  Use Xray to scrub movieclip timelines, go to framelabels or use the Execute panel to call the methods directly to test.",  data: baseURL + "assets/videos/FunctionTesting.flv", image: baseURL + "assets/images/FunctionTesting.png"},
+				{label: "Active Highlighting to find objects on stage", tooltip: "Ever have a hard time locating objects on stage at runtime?  Check out this video clip to see how the treeview can help you with active highlighting and nail down those elusive objects.",  data: baseURL + "assets/videos/ActiveHighlighting.flv", image: baseURL + "assets/images/ActiveHighlighting.png"},
+				{label: "Optimize: FLV/Bitmap/fps", tooltip: "Getting the most FPS out of your SWF.  See how we did it in the EPIII site in one situation",  data: baseURL + "assets/videos/EPIII_scrollingOptimization.flv", image: baseURL + "assets/images/EPIIIOptimization.png"},
+				{label: "Optimize: FLV/Bitmap/fps #2", tooltip: "Optimize your SWF with Xray.  This covers how we were able to nail down some issues where FLV's were playing over bitmaps.",  data: baseURL + "assets/videos/EPIII_SierraOptimization.flv", image: baseURL + "assets/images/EPIIISierraOptimization.png"}];
+            [Bindable]
+            public var videoHelpList:ArrayCollection;
+			
+			public function initApp():void
+			{		
+				
+				// Logger connection
+				lc = new LoggerConnection();
+				lc.initConnection();
+				
+				// Execute connection
+				ec = new ExecuteConnection();
+				ec.initConnection();
+				
+				TreeTools.registerEC(ec);
+				PropertyTools.registerEC(ec);
+				InputTools.registerEC(ec);
+				InputTools.registerLC(lc);
+				FilterTools.registerEC(ec);
+				SoundTools.registerEC(ec);
+				VideoTools.registerEC(ec);
+				//OutputTools.tt(["gridLinePanel?", gridLinePanel.registerEC]);
+				//gridLinePanel.registerEC(ec);
+				
+				ToolTipManager.showDelay = 0;
+				ToolTipManager.hideDelay = 10000;
+				
+				// get preferences
+				LSOUserPreferences.load("XrayFlexPrefs");
+				
+				propertiesViewStack.x = treeViewPanel.x + treeViewPanel.width;
+				videoHelpList = new ArrayCollection(helpList);
+				
+				//if(input == null) input.initialize();
+	
+				//OutputTools.setAcceptOutput();
+				
+				setListeners();
+				loadPreferences();
+				
+				output.logo = new LogoPanel();		
+				
+				var kickstart:Timer = new Timer(2000,1);
+				kickstart.addEventListener(TimerEvent.TIMER, onKickStart);
+				kickstart.start();
+						
+				//createContextMenu();
+				
+			}
+			
+			private function onKickStart(event:TimerEvent) : void
+			{
+				output.append("XRay Started");
+			}
+			
+			public function loadPreferences():void
+			{
+				// find if notFirstTimeLoaded:
+				if(!LSOUserPreferences.getPreference("notFirstTimeLoaded"))
+				{
+					LSOUserPreferences.setPreference("showSplash", true, true);
+					LSOUserPreferences.setPreference("notFirstTimeLoaded", true, true);
+				}
+				// accept output data
+				acceptOutput.selected = LSOUserPreferences.getPreference("acceptOutput");
+				OutputTools.acceptOutput = acceptOutput.selected;
+				
+				// active highlighting
+				showActiveHighlighting.selected = LSOUserPreferences.getPreference("activeHighlighting");
+				
+				// frames per second meter
+				LSOUserPreferences.setPreference("showFPS", true, true);
+				var showFPS:Boolean = true;
+				if(showFPS) ec.showFPS();
+				if(!showFPS) ec.hideFPS();	
+				
+				// get connector Version
+				ec.getConnectorVersion();	
+			}
+			
+			private function setLogLevelButtons():void
+			{
+				// set radio button positions
+				
+				logLevel = Number(LSOUserPreferences.getPreference("logLevel"));
+				if(!logLevel) logLevel = 0;
+				
+				try
+				{
+					updateLevel(Number(logLevel));
+				}catch(e:Error)
+				{
+				
+				}
+				
+				this["debug_" + Number(logLevel)].selected = true;
+				
+				// because of timing issues, call showSplashScreen here
+				// if show splash, then do it
+				if(LSOUserPreferences.getPreference("showSplash")) showSplashScreen();
+			}
+			
+			public function setListeners():void
+			{
+				//treeView.addEventListener("itemOpen", TreeTools.clickHandler);
+				//treeView.addEventListener("itemClose", TreeTools.close);
+				treeView.addEventListener("itemRollOver", TreeTools.rollOverHandler);
+				treeView.addEventListener("click", TreeTools.clickHandler);
+				
+				leftToolBar.addEventListener("itemClick", SoundTools.toolChange);
+				leftToolBar.addEventListener("itemClick", VideoTools.toolChange);
+				
+				tabBar.addEventListener("itemClick", PropertyTools.toolChange);
+				
+				//application.addEventListener(KeyboardEvent.KEY_DOWN, trapKeys)
+				//application.addEventListener(KeyboardEvent.KEY_UP, trapKeys)
+				
+			}
+			
+			private function trapKeys(event:KeyboardEvent):void
+			{
+			    //OutputTools.tt([String(event.charCode), String(event.keyCode), event]);
+			    shiftKeyDown = event.shiftKey;
+			}
+			
+			/*
+			private function createContextMenu():void
+			{
+				customContextMenu = new ContextMenu();
+				var item:ContextMenuItem = new ContextMenuItem("__________");
+            	customContextMenu.customItems.push(item);
+            	item.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, contextMenuSelector);
+				customContextMenu.addEventListener(ContextMenuEvent.MENU_SELECT, contextMenuSelector);
+			}
+			
+			private function contextMenuSelector(event:ContextMenuEvent):void
+			{
+				OutputTools.tt(["Right click", event]);	
+			}
+			*/
+			
+			private function showSplashScreen():void
+			{
+				var window:BlitzSplashScreen = BlitzSplashScreen(PopUpManager.createPopUp(this, BlitzSplashScreen , true));
+				PopUpManager.centerPopUp(window);
+			}
+			
+			public function stateChangeCleanup():void
+			{
+				if(currentState == "")	treeviewStack.selectedIndex = 0;
+			}
+			
+			// when we switch to the stringNumericEdit state, we need to set up the listener for the button
+			public function setPropertyListeners(stateName:String):void
+			{
+				var editProps:Object;
+				switch(stateName)
+				{
+					case "stringNumericEdit":
+						updateStringNumeric.addEventListener("click", PropertyTools.updateStringProperty);
+					break;
+					
+					case "stringNumericEditSlider":
+						editValueStringNumericSliderSlider.addEventListener("thumbDrag", PropertyTools.updateSliderValue);
+						editValueStringNumericSliderSlider.addEventListener("change", PropertyTools.updateSliderValue);
+						editValueStringNumericSliderText.addEventListener("change", PropertyTools.updateStringProperty);
+						updateStringNumericSlider.addEventListener("click", PropertyTools.updateStringProperty);
+						// set up sliders etc
+						editProps = PropertyTools.currentEditorObject;
+						editValueStringNumericSliderSlider.maximum = editProps.maxValue;
+						editValueStringNumericSliderSlider.minimum = editProps.minValue;
+						editValueStringNumericSliderSlider.value = propertyInspector.selectedItem.value;
+						editValueStringNumericSliderSlider.invalidateProperties();
+						editValueStringNumericSliderText.text = propertyInspector.selectedItem.value;
+					break;
+					
+					case "timelineController":
+						editValueStringNumericSliderSlider.addEventListener("thumbDrag", PropertyTools.updateSliderValue);
+						editValueStringNumericSliderSlider.addEventListener("change", PropertyTools.updateSliderValue);
+						editValueStringNumericSliderText.addEventListener("change", PropertyTools.updateStringProperty);
+						updateStringNumericSlider.addEventListener("click", PropertyTools.updateStringProperty);
+						
+						editProps = PropertyTools.currentEditorObject;
+						var totalframes:Number = PropertyTools.getProperty("_totalframes").value;
+						editValueStringNumericSliderSlider.maximum = totalframes;
+						editValueStringNumericSliderSlider.minimum = editProps.minValue;
+						editValueStringNumericSliderSlider.value = propertyInspector.selectedItem.value;
+						editValueStringNumericSliderSlider.invalidateProperties();
+						editValueStringNumericSliderText.text = propertyInspector.selectedItem.value;
+						gotoAndStop.selected = true;
+					break;
+				}
+				
+			}
+	        
+	        public function updateIcon(item:XML):Class
+	        {
+	        	var objectType:Number = item.attribute("t");
+	        	var icon:Class;
+	        	
+	        	switch(objectType)
+	        	{
+	        		case 0:
+	        			icon = iconDocument
+	        			break
+	        		
+	        		case 1:
+	        			icon = iconDocument
+	        			break
+	        		
+	        		case 2:
+	        			icon = iconMovieclip;
+	        			break;
+	        		
+	        		case 3:
+	        			icon = iconButton;
+	        			break
+	        		
+	        		case 4:
+	        			icon = iconSound;
+	        			break
+	        			
+	        		case 5:
+	        			icon = iconDocument;
+	        			break
+	        		
+	        		case 6:
+	        			icon = iconVideo;
+	        			break
+	        			
+	        		case 7:
+	        			icon = iconDocument;
+	        			break
+	        			
+	        		case 8:
+	        			icon = iconDocument;
+	        			break
+	        			
+	        		case 9:
+	        			icon = iconDocument;
+	        			break
+	        			
+	        		case 10:
+	        			icon = iconDocument;
+	        			break
+	        			
+	        		case 11:
+	        			icon = iconDocument;
+	        			break
+	        			
+	        		case 12:
+	        			icon = iconDocument;
+	        			break
+	        		
+	        		default:
+	        			icon = iconFolder;
+	        	}
+	        	
+	        	/*
+	        	if(bObject) {i=0} else 
+				if(bAry) {i=1} else 
+				if(bMc) {i=2} else 
+				if(bButton) {i=3} else 
+				if(bSound) {i=4} else 
+				if(bTextField) {i=5} else 
+				if(bVideo) {i=6} else 
+				if(bFunction) {i = 7} else 
+				if(bNetStream) {i = 8} else 
+				if(bString) {i = 9} else 
+				if(bNumber) {i = 10} else 
+				if(bBoolean) {i = 11} else 
+				if(bDate) {i = 12}
+	        	*/	
+	        	//OutputTools.tt(["updateIcon called", objectType]);
+	        	return icon;	        	
+	        }
+	        
+	        public function getObject(event:Object):void
+	        {
+	        	ec.viewTree(String(startingPath.value));
+	        }
+			
+			private function updateLevel(p_level:Number):void
+			{
+				logLevel = p_level;
+				ec.setLogLevel(p_level);
+				LSOUserPreferences.setPreference("logLevel", p_level, true);
+			}
+	        
+			private function updateActiveHighlighting():void
+			{
+				LSOUserPreferences.setPreference("activeHighlighting", showActiveHighlighting.selected, true);
+				//OutputTools.tt(["updateActiveHighlighting",showActiveHighlighting.selected]);
+			}
+			
+		]]>
+	</mx:Script>
+	<mx:TextArea id="searchLineCheck" visible="false" editable="false" enabled="true" wordWrap="true" width="100%" height="100%" borderStyle="none" />
+	<mx:HDividedBox id="hDivideBox" liveDragging="true" left="2" right="2" bottom="45" top="50">
+		<mx:Canvas width="400" height="100%" id="treeViewContainer">
+			<mx:ApplicationControlBar x="10" y="10" width="100%" height="33">
+				<mx:LinkBar width="100%" dataProvider="treeviewStack" id="leftToolBar">
+				</mx:LinkBar>
+			</mx:ApplicationControlBar>
+			<mx:ViewStack x="10" y="51" id="treeviewStack" width="100%" height="100%">
+				<mx:Panel label="Snapshot" y="51" width="100%" height="100%" layout="vertical" id="treeViewPanel" title="Application View" x="10" backgroundAlpha="0">
+					<mx:ApplicationControlBar width="100%">
+						<mx:ComboBox editable="true" id="startingPath" labelField="@label" enabled="true" width="114">
+							<mx:dataProvider>
+							       <mx:Array>
+							           <mx:String>_level0</mx:String>
+							           <mx:String>_global</mx:String>
+							       </mx:Array>
+							   </mx:dataProvider>
+						</mx:ComboBox>
+						<mx:Button label="GO" id="getSnapShot" enabled="true" click="getObject(event)" toolTip="Take Snap Shot"/>
+						<mx:CheckBox id="showActiveHighlighting" click="updateActiveHighlighting()" width="100%" height="18" label="Highlight Objects?" />
+					</mx:ApplicationControlBar>
+					<mx:Tree width="100%" height="100%" horizontalScrollPolicy="on" labelField="@label" id="treeView" iconFunction="updateIcon" backgroundAlpha="1.0" dataProvider="{treeData}"></mx:Tree>
+				</mx:Panel> 
+				<mx:Panel label="Trace/Execute" width="100%" height="100%" x="10" backgroundAlpha="0" id="tracePanel" title="Trace / Execute ActionScript">
+					<mx:TextArea width="100%" height="100%" id="input" wordWrap="true" editable="true" enabled="true" fontFamily="Courier New" fontSize="12" keyUp="InputTools.flushCommand(event)" color="#00356a" text="{currentFunctionCall}">
+						<mx:toolTip>You can trace any property at runtime - anything from simple properties to complex objects.  You can also execute custom actionscript that's not compiled with your swf through this panel.</mx:toolTip>
+					</mx:TextArea>
+				</mx:Panel> 
+				<mx:Panel label="Filters" width="100%" height="100%" id="filtersPanel" title="Flash8 Filters" backgroundAlpha="0" show="currentState=FilterTools.currentFilterState">
+					<mx:ApplicationControlBar width="100%" id="applicationcontrolbar1">
+						<mx:ComboBox width="105" id="filterChoice" enabled="true" change="FilterTools.updateState(event)">
+							<mx:dataProvider>
+							      <mx:Array>
+							          <mx:String>DropShadow</mx:String>
+							          <mx:String>Glow</mx:String>
+							          <mx:String>Blur</mx:String>
+							      </mx:Array>
+							  </mx:dataProvider>
+						</mx:ComboBox>
+					</mx:ApplicationControlBar>
+					<mx:Canvas width="100%" height="100%" id="canvas2">
+					</mx:Canvas>
+				</mx:Panel>
+				<mx:Panel label="Sound" width="100%" height="100%" id="soundPanel" title="Sound Control" backgroundAlpha="0">
+					<mx:ApplicationControlBar width="100%">
+						<mx:Button label="play" id="playSound" width="41" click="SoundTools.playSound();"/>
+						<mx:Button label="stop" id="stopSound" width="41" click="SoundTools.stopSound();"/>
+						<mx:TextInput width="44" id="loopCount" text="0" toolTip="Enter a loop count for the sound. 0 = play one time, 1+ = loop count"/>
+					</mx:ApplicationControlBar>
+					<mx:Canvas width="100%" height="100%">
+						<mx:VSlider y="30" height="85" id="soundVolume" minimum="0" maximum="100" snapInterval="1" right="13" liveDragging="true" thumbRelease="SoundTools.volumeChangeComplete(event);" thumbDrag="SoundTools.volumeChange(event);"/>
+						<mx:Label y="117" text="vol." id="volumeLabel" right="5"/>
+						<mx:HSlider y="56" id="soundPosition" right="56" liveDragging="true" thumbRelease="SoundTools.positionChangeComplete(event);" thumbDrag="SoundTools.positionChange(event);" left="10"/>
+						<mx:HSlider y="103" id="soundPan" minimum="-100" maximum="100" snapInterval="1" value="0" right="56" liveDragging="true" thumbRelease="SoundTools.panChangeComplete(event);" thumbDrag="SoundTools.panChange(event);" left="10"/>
+						<mx:Label y="30" text="position" id="soundPositionLabel" left="10"/>
+						<mx:Label y="86" text="pan" id="panSound" left="10"/>
+						<mx:Label y="2" text="00:00" id="soundDuration" left="208"/>
+						<mx:Label text="SoundName" id="soundName" width="133" height="20" enabled="true" color="#ffffff" fontWeight="bold" y="2" left="10"/>
+						<mx:Label x="153" y="2" text="Duration:"/>
+					</mx:Canvas>
+				</mx:Panel>
+				<mx:Panel label="Video" width="100%" height="100%" id="videoPanel" title="Video Control" backgroundAlpha="0">
+					<mx:ApplicationControlBar width="100%">
+						<mx:Button label="play" id="videoPlay" width="41" click="VideoTools.playVideo(false);">
+							<mx:toolTip>If you have selected an FLV file reference from the Property Inspector and selected a NetStream object, you can control plaback through this panel.
+							
+NOTE: if you see the properties updating, but the video is not visible, it might be that you've ont connected the NetStream Object to your video container
+							</mx:toolTip>
+						</mx:Button>
+						<mx:Button label="pause" width="46" id="videoPause" click="VideoTools.pauseVideo();"/>
+						<mx:Button label="stop" id="videoStop" width="41" click="VideoTools.stopVideo();">
+							<mx:toolTip>!! Stopping a NetStream means you will have to provide a file location if you want to play the stream again.  Maybe use Pause?</mx:toolTip>
+						</mx:Button>
+					</mx:ApplicationControlBar>
+					<mx:Canvas width="100%" height="100%">
+						<mx:Label text="VideoName" left="10" y="2" right="10" id="videoName" color="#ffffff" fontWeight="bold"/>
+						<mx:Label text="VideoFLVReference" left="10" y="20" right="10" id="videoFLVReference" color="#eeeeee" fontWeight="bold"/>
+						<mx:HSlider id="videoPosition" thumbDrag="VideoTools.positionChange(event)" thumbRelease="VideoTools.positionChangeComplete(event)" y="61" left="10" right="10" liveDragging="true" enabled="false"/>
+						<mx:Label x="10" y="43" text="Position" id="videoPositionLabel"/>
+						<mx:Text right="10" left="10" id="metaData" bottom="10" top="80"/>
+					</mx:Canvas>
+				</mx:Panel>
+			</mx:ViewStack>
+		</mx:Canvas>
+		<mx:Canvas width="65%" height="100%" id="propertyInspectorContainer">
+			<mx:ViewStack y="51" id="propertiesViewStack" height="100%" left="0" right="2">
+				<mx:Panel label="Output" width="100%" height="100%" id="outputPanel" title="Output" horizontalAlign="center" verticalScrollPolicy="off" horizontalScrollPolicy="off" layout="vertical" y="51" backgroundAlpha="0">
+					<logViewer:LogViewer  id="output" width="100%" height="100%" borderStyle="solid" borderColor="#400040" />
+					<mx:HBox width="100%" paddingBottom="3">
+						<mx:Button label="Clear" height="20" fontSize="9" enabled="true" id="clearOutput" click="OutputTools.clear()" y="0" toolTip="Clear Output Panel" left="0"/>
+						<mx:CheckBox label="Show Output?" id="acceptOutput" y="1" click="OutputTools.setAcceptOutput();" left="60" width="104">
+							<mx:toolTip>Un-check if you don't want to receive trace statements</mx:toolTip>
+						</mx:CheckBox>
+					</mx:HBox>
+				</mx:Panel>
+				<mx:Panel label="PropertyInspector" width="100%" height="100%" title="Property Inspector" id="propertyInspectorPanel" backgroundAlpha="0">
+					<mx:DataGrid editable="false" 
+							itemClick="PropertyTools.clickHandler(event)"
+							itemRollOver="PropertyTools.rollOverHandler(event)" 
+							width="100%" 
+							height="100%"
+							id="propertyInspector" >
+						<mx:columns>
+							<mx:DataGridColumn editable="false" sortDescending="false" headerText="Property" dataField="property">
+								<mx:itemRenderer>
+								<mx:Component id="cellRendererProperty">                                     		
+								   <mx:HBox height="100%">
+								         <mx:Text id="propertyField" text="{data.property}" toolTip="{data.value}" width="100%" height="18" selectable="false"/>
+								   </mx:HBox>
+								 </mx:Component>
+								 </mx:itemRenderer>							
+							</mx:DataGridColumn>
+							<mx:DataGridColumn headerText="Value" dataField="value" >
+								<mx:itemRenderer>
+								<mx:Component id="cellRendererValue">                                     		
+								   <mx:HBox height="100%">
+								         <mx:Text id="valueField" text="{data.value}" toolTip="{data.value}" width="100%" height="18" selectable="false"/>
+								   </mx:HBox>
+								 </mx:Component>
+								 </mx:itemRenderer>
+							</mx:DataGridColumn>
+							<mx:DataGridColumn editable="false" headerText="Type" dataField="type"/>
+						</mx:columns>
+					</mx:DataGrid>
+					<ns1:GridLinePanel id="gridLinePanel"/>
+				</mx:Panel>
+				<mx:Panel label="Help" width="100%" height="100%" backgroundAlpha="0">
+						<mx:TileList dataProvider="{videoHelpList}" 
+							id="videoHelpListContainer" 
+							allowMultipleSelection="false" 
+							width="100%" 
+							height="100%"
+							cornerRadius="5" 
+							backgroundAlpha="0" 
+							dropShadowEnabled="true" 
+							change="XrayHelp.selectHelp(event);" 
+							horizontalScrollPolicy="{ScrollPolicy.AUTO}" 
+							variableRowHeight="false" 
+							rollOverColor="#AEBFD2" 
+							selectionColor="#FFFFFF" 
+							itemRenderer="VideoThumbnail"> 
+					    	<!--<mx:itemRenderer>
+					    		<mx:Component>
+					    			<mx:Panel 
+					    				x="296" 
+					    				y="239" 
+					    				title="{data.label}">
+								        <mx:Image width="164" height="89" source="{data.image}"/>
+								    </mx:Panel>
+					    		</mx:Component>
+					    	</mx:itemRenderer>-->
+					    </mx:TileList>
+				</mx:Panel>
+				
+				
+			</mx:ViewStack>
+			<mx:ApplicationControlBar y="10" width="100%" right="2" height="33">
+				<mx:LinkBar dataProvider="propertiesViewStack" width="256" id="tabBar">
+				</mx:LinkBar>
+				<mx:Canvas width="100%" height="26" horizontalScrollPolicy="off" verticalScrollPolicy="off" id="outputControlsCanvas">
+					<mx:Button y="0" label="&lt; Go Back" right="2" id="historyBack" click="PropertyTools.goBack();" toolTip="Go back to previous object in property inspector" enabled="false"/>
+				</mx:Canvas>
+			</mx:ApplicationControlBar>
+		</mx:Canvas>
+	</mx:HDividedBox>
+	<mx:ApplicationControlBar y="3" height="51" right="5" left="10">
+		<mx:Canvas width="461" height="40">
+			<mx:Image x="4" y="4" source="@Embed('assets/BlitzLogo.png')" id="blitzLogo" scaleContent="false"/>
+		</mx:Canvas>
+		<mx:Canvas width="100%" height="40">
+			<mx:SWFLoader y="-1" width="130" height="40" source="@Embed('assets/XrayLogo_animated.swf')" right="0" id="xrayLogo" scaleContent="false"/>
+		</mx:Canvas>
+	</mx:ApplicationControlBar>
+	<mx:ApplicationControlBar right="5" left="10" id="toolsBar" bottom="8">
+		<mx:Label text="[ 0 fps ]" id="fpsMeter" fontFamily="Courier New" fontWeight="bold" fontSize="12" color="#00356a" toolTip="Current Frames Per Second Avg."/>
+		<mx:Canvas width="100%" height="20">
+			<mx:Text y="2" width="100%" id="status" color="#800000" textAlign="right" enabled="true" fontWeight="bold" fontFamily="Arial" fontSize="12" left="50"/>
+		</mx:Canvas>
+	</mx:ApplicationControlBar>	
+</mx:Application>

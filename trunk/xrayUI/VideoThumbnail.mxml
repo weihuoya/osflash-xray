@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" 
+	dropShadowEnabled="true"
+	fontWeight="bold"
+	 width="174" height="135" dropShadowColor="#575757">
+	<mx:Text text="{data.label}" id="title" height="32" width="174" textAlign="center" fontWeight="bold"/>
+	
+	<mx:Image height="89" source="{data.image}" toolTip="{data.tooltip}" top="40" left="5" right="5"/>	
+	
+</mx:Canvas>
+<!--
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" 
+	borderAlpha="0"
+	dropShadowEnabled="true"
+	roundedBottomCorners="true"
+	backgroundColor="#003366" 
+	backgroundAlpha=".22" 
+	color="#ffffff" 
+	fontWeight="bold"
+	layout="vertical" 
+	title="{data.label}">
+	<mx:Label text="Label" text="{data.label}"/>
+	
+	<mx:Image width="164" height="89" source="{data.image}"/>	
+	
+</mx:Panel>
+-->
