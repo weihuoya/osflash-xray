@@ -105,7 +105,7 @@ class com.blitzagency.xray.Xray
 	public static var basePackages:Array;
 	public static var packagesInitialized:Boolean;
 	public static var addedObjects:Object;
-	public static var $version:String = "1.6.2";
+	public static var $version:String = "1.6.3";
 	/**
 	 * RecursionControl is a static control number letting the loop know that a particular object's been looped.
 	 * the idea is that we'll switch it back and forth.  I was deleting the check (using boolean flag) after the obj had been looped, but

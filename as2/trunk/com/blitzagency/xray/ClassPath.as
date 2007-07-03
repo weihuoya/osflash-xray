@@ -174,11 +174,21 @@ class com.blitzagency.xray.ClassPath
 
 				//else if it isnt a class object, but still an object,recurse it to find more objects.
 			}
-			else if (node[childNode] instanceof Object)
+			else if (node[childNode] instanceof Object && !checkInitialized(node[childNode]))
 			{
-			classPusher (node[childNode], extName + childNode);
+				check.push(node[childNode]);
+				classPusher (node[childNode], extName + childNode);
 			}
 		}
+	}
+	
+	private static function checkInitialized(obj:Object):Boolean
+	{
+		for(var i:Number=0;i<check.length;i++)
+		{
+			if(check[i] == obj) return true;
+		}
+		return false;
 	}
 	
 	/*
