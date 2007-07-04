@@ -3,8 +3,8 @@ package com.blitzagency.xray.inspector.flex2
 	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
 	import com.blitzagency.xray.inspector.util.ControlConnection;
-	import com.blitzagency.xray.inspector.util.Commander;
-	import com.blitzagency.xray.inspector.Flex2.FlexObjectInspector;
+	import com.blitzagency.xray.inspector.commander.Commander;
+	import com.blitzagency.xray.inspector.flex2.FlexObjectInspector;
 	import com.blitzagency.xray.logger.XrayLog;
 
 	public class Xray extends EventDispatcher
@@ -30,7 +30,7 @@ package com.blitzagency.xray.inspector.flex2
 			controlConnection.setObjectInspector(new FlexObjectInspector());
 			controlConnection.initConnection();
 			
-			Commander.setObjectInspector(new FlexObjectInspector());
+			Commander.getInstance().objectInspector = new FlexObjectInspector();
 			
 			controlConnection.send("_xray_conn", "checkFPSOn");
 		}		
