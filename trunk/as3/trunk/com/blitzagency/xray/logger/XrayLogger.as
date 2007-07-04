@@ -1,18 +1,13 @@
 ﻿package com.blitzagency.xray.logger
 {
-	import flash.display.DisplayObject;
 	import flash.events.EventDispatcher;
 	import com.blitzagency.xray.logger.Debug;
 	import com.blitzagency.xray.logger.Logger;
 	import com.blitzagency.xray.logger.Log;
-	import com.blitzagency.xray.logger.OutputPanel;
 	import com.blitzagency.xray.logger.util.PropertyTools;
 	import com.blitzagency.xray.logger.util.ObjectTools;
 	import flash.utils.*;
 	import flash.events.KeyboardEvent;
-	import mx.managers.PopUpManager;
-	import mx.core.Application;
-	import flash.display.Stage;
 			
 	/**
 	 * @author John Grden
@@ -67,9 +62,6 @@
 		private var objectRecursionDepth:Number = 254;
 		private var indentation:Number = 0;
 		private var filters:Array = [];
-		private var app:Object = Application.application;
-		private var outputPanel:OutputPanel;
-		private var stage:Stage;
 		
 		
 		public static function getInstance():XrayLogger
@@ -77,26 +69,9 @@
 			if(_instance == null)
 			{
 				_instance = new XrayLogger();
-				_instance.init();
 			}
 			
 			return _instance;
-		}
-		
-		public function init():void
-		{
-			 	
-		}
-		
-		public function showOutputPanel():void
-		{
-			outputPanel = OutputPanel( PopUpManager.createPopUp( flash.display.DisplayObject(mx.core.Application.application), com.blitzagency.xray.logger.OutputPanel ) );
-		}
-		
-		public function registerStage(p_stage:Stage):void
-		{
-			stage = p_stage;
-			stage.addEventListener( KeyboardEvent.KEY_UP, keyUpEventHandler, false, 10, true ); //
 		}
 
 		public function setDisplayClipRecursionDepth(p_recursionDepth:Number):void
@@ -127,31 +102,41 @@
 		public function debug(obj:Log):void
 		{
 			if(obj.getLevel() == level) 
-			log(obj.getMessage(), obj.getDump(), obj.getCaller(), obj.getClassPackage(), 0);
+			{
+				log(obj.getMessage(), obj.getDump(), obj.getCaller(), obj.getClassPackage(), 0);
+			}
 		}
 		
 		public function info(obj:Log):void
 		{
 			if(obj.getLevel() >= level) 
-			log(obj.getMessage(), obj.getDump(), obj.getCaller(), obj.getClassPackage(), 1);
+			{
+				log(obj.getMessage(), obj.getDump(), obj.getCaller(), obj.getClassPackage(), 1);
+			}
 		}
 		
 		public function warn(obj:Log):void
 		{
 			if(obj.getLevel() >= level) 
-			log(obj.getMessage(), obj.getDump(), obj.getCaller(), obj.getClassPackage(), 2);
+			{
+				log(obj.getMessage(), obj.getDump(), obj.getCaller(), obj.getClassPackage(), 2);
+			}
 		}
 		
 		public function error(obj:Log):void
 		{
 			if(obj.getLevel() >= level) 
-			log(obj.getMessage(), obj.getDump(), obj.getCaller(), obj.getClassPackage(), 3);
+			{
+				log(obj.getMessage(), obj.getDump(), obj.getCaller(), obj.getClassPackage(), 3);
+			}
 		}
 		
 		public function fatal(obj:Log):void
 		{
 			if(obj.getLevel() >= level) 
-			log(obj.getMessage(), obj.getDump(), obj.getCaller(), obj.getClassPackage(), 4);
+			{
+				log(obj.getMessage(), obj.getDump(), obj.getCaller(), obj.getClassPackage(), 4);
+			}
 		}
 		
 		/**
@@ -165,12 +150,13 @@
 		 */
 		public function log(message:String, dump:Object, caller:String, classPackage:String, level:Number):void 
 		{		
+			
 			// add time stamp
 			var traceMessage:String = "(" + getTimer() + ") ";
 			if(classPackage.length > 0) traceMessage += caller + "\n";
 			traceMessage += message;
 
-			Debug.trace(traceMessage, classPackage, level);
+			if(message.length > 0) Debug.trace(traceMessage, classPackage, level);
 			
 			// check to see if dump is an object or not
 			var type:String = typeof(dump);
@@ -194,6 +180,7 @@
 					Debug.traceObject(obj, displayObjectRecursionDepth, indentation, classPackage, level);
 				}
 			}
+			
 		}
 		
 		public function checkFilters():Boolean
@@ -205,16 +192,6 @@
 				
 			}
 			return true;
-		}
-		
-		private function keyUpEventHandler( event:KeyboardEvent ):void 
-		{
-			//Debug.trace(mx.core.Application.application.getChildByName("outputPanel"), "", 0);
-			//if( event.ctrlKey && event.shiftKey && event.charCode == 76 ) {
-			if( event.shiftKey && event.charCode == 76) 
-			{
-				showOutputPanel();
-			}
 		}
 	}
 }

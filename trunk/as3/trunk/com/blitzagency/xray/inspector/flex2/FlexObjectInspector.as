@@ -2,9 +2,14 @@ package com.blitzagency.xray.inspector.flex2
 {
 	import com.blitzagency.xray.inspector.util.ObjectInspector;
 	import mx.core.Application;
+	import flash.display.DisplayObjectContainer;
+	import flash.display.DisplayObject;
+	import com.blitzagency.xray.logger.XrayLog;
 
 	public class FlexObjectInspector extends ObjectInspector
 	{
+		private var log												:XrayLog = new XrayLog();
+		
 		public function FlexObjectInspector()
 		{
 			super();
@@ -12,7 +17,7 @@ package com.blitzagency.xray.inspector.flex2
 		
 		public override function buildObjectFromString(target:String):Object
 		{
-			var obj:Object = mx.core.Application.application;
+			var obj:Object = mx.core.Application.application as Object;
 			
 			var ary:Array = target.split(".");
 
@@ -24,7 +29,9 @@ package com.blitzagency.xray.inspector.flex2
 			
 			for(var i:Number=1;i<ary.length;i++)
 			{
-                obj = obj.getChildByName(ary[i]);
+				var temp:Object = obj.getChildByName(ary[i]) as Object;
+                if(temp == obj) continue;
+                obj = temp;
             }
 
 			return obj;

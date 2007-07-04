@@ -2,7 +2,7 @@ package com.blitzagency.xray.inspector.util
 {
 	import com.blitzagency.xray.inspector.util.ObjectInspector;
 	import com.blitzagency.xray.logger.util.ObjectTools;
-	import com.blitzagency.xray.inspector.util.Commander;
+	import com.blitzagency.xray.inspector.commander.Commander;
 	import com.blitzagency.xray.logger.XrayLog;
 	
 	import flash.display.DisplayObject;
@@ -16,12 +16,12 @@ package com.blitzagency.xray.inspector.util
 
 	public class ControlConnection extends LocalConnection
 	{
-		private var log:XrayLog = new XrayLog();
-		private var queTimer:Timer = new Timer(25,1);
-		private var serialTimer:Timer = new Timer(25,1);
-		private var dataQue:Array = [];
-		private var serializedQue:Array = [];
-		private var objectInspector:ObjectInspector;
+		private var log																	:XrayLog = new XrayLog();
+		private var queTimer															:Timer = new Timer(25,1);
+		private var serialTimer															:Timer = new Timer(25,1);
+		private var dataQue																:Array = [];
+		private var serializedQue														:Array = [];
+		private var objectInspector														:ObjectInspector;
 		
 		public function ControlConnection()
 		{
@@ -55,6 +55,8 @@ package com.blitzagency.xray.inspector.util
 			log.debug("view tree called", p_target);
 	        
 	        var data:String = objectInspector.inspectObject(p_target);
+	        
+	        //log.debug("data length", data.length);
 
 	        if(data.length < 1) return;
 	        var dataLength:Number = data.length;
@@ -83,8 +85,8 @@ package com.blitzagency.xray.inspector.util
     	
     	public function executeScript(script:String):void
     	{
-    		log.debug("execute", script);
-            Commander.exec(script);
+    		//log.debug("execute", script);
+            Commander.getInstance().execute(script);
         }
     	
     	public function fpsOn(showFPS:Boolean):void
@@ -97,8 +99,9 @@ package com.blitzagency.xray.inspector.util
             //fpsMeter.__set__runFPS(showFPS);
         }
         
-        public function getMovieClipPropertiesF2(target:String, showAll:Boolean) :void
+        public function getMovieClipPropertiesF2(target:String, showAll:Boolean):void
         {
+        	//log.debug("getMovieClipPropertiesF2", target);
             var obj:Object = objectInspector.getProperties(target);
             serialize(obj);
         }
@@ -121,7 +124,7 @@ package com.blitzagency.xray.inspector.util
         
         public function getFunctionPropertiesF2(target:String) :void
         {
-        	log.debug("getFunctionPropertiesF2", target);
+        	//log.debug("getFunctionPropertiesF2", target);
             var obj:Object = objectInspector.getProperties(target);
             serialize(obj);
         }
@@ -187,7 +190,7 @@ package com.blitzagency.xray.inspector.util
     	{
     		// reset que
     		serializedQue = [];
-            var data:String = ObjectTools.parseObject(obj,"serialized");
+            var data:String = objectInspector.parseObjectToString(obj,"serialized");
 
             if(data.length > 5000)
             {
@@ -230,7 +233,7 @@ package com.blitzagency.xray.inspector.util
     	private function statusEventHandler(e:StatusEvent):void
     	{
     		//log.debug("statusEvent", e.level);
-    		if(e.level == "status") log.debug("message sent successfully");
+    		if(e.level == "status") {};//log.debug("message sent successfully");
     	}		
 	}
 }

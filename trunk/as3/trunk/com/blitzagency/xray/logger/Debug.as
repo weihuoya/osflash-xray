@@ -47,7 +47,7 @@
 			catch (e:Error)
 			{
 				err = new LogError("log");
-				xrayLC.close();
+				//xrayLC.close();
 				setTimeout(makeConnection, 1000);
 			}
 			finally
@@ -84,6 +84,7 @@
 		{	
 			// trace to the Flash IDE output window
 			ed.sendEvent(DebugDispatcher.TRACE, {message:pMsg, classPackage:pPackage});
+			//trace(pMsg);
 
 			if(!connected) 
 			{

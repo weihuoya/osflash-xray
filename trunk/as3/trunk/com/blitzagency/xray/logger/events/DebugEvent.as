@@ -9,6 +9,6 @@ package com.blitzagency.xray.logger.events
 		{
 			super(type, bubbles, cancelable);
 			obj = p_obj;
-		}
+		}	
 	}
 }

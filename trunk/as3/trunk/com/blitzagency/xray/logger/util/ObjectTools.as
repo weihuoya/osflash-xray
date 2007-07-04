@@ -7,25 +7,6 @@
 	{
 		private static var log:XrayLog = new XrayLog();
 		
-		private static var strings:Array = new Array
-		(
-			{
-				replace:"&lt;", from:"<"
-			},
-			{
-				replace:"&gt;", from:">"
-			},
-			{
-				replace:"&apos;", from:"'"
-			},
-			{
-				replace:"&quot;", from:"\""
-			},
-			{
-				replace:"&amp;", from:"&"
-			}
-		)
-		
 		public static function getFullClassPath(obj:Object):String
 		{
 			var xmlDoc:XML = describeType(obj);
@@ -59,35 +40,6 @@
 			
 			superClassName = superClassName.indexOf("::") > -1 ? superClassName.split("::").join(".") : superClassName;
 			return superClassName + "." + className;
-		}
-		
-		public static function parseObject(p_obj:Object, p_nodeName:String="root"):String
-		{
-			var str:String = "<" + p_nodeName + ">";
-			for(var items:String in p_obj)
-			{
-				if(typeof(p_obj[items]) == "object")
-				{
-					str += parseObject(p_obj[items], items);
-				}else
-				{
-					var nodeValue:* = p_obj[items];
-					if(typeof(nodeValue) != "boolean" && typeof(nodeValue) != "number") nodeValue = encode(p_obj[items]);
-					str += "<" + items + ">" + nodeValue + "</" + items + ">";
-				}
-			}
-			str += "</" + p_nodeName + ">";
-			return str;
-		}
-		
-		private static function encode(p_str:String):String
-		{
-			for(var i:Number=0;i<strings.length;i++)
-			{
-				p_str = p_str.split(strings[i].from).join(strings[i].replace);
-			}
-			
-			return p_str;
 		}
 		
 		public function resolveBaseType(obj:Object):String
