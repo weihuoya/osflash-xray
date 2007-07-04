@@ -2,6 +2,7 @@
 {
 	import com.blitzagency.xray.logger.XrayLogger;
 	import com.blitzagency.xray.logger.util.ObjectTools;
+	import com.blitzagency.xray.logger.Debug;
 
 	public class Log
 	{
@@ -13,7 +14,7 @@
 		
 		/*
 		* I generate an error in the constructor as to force the debugger to give me the stackTrace
-		* Supposedly, this won't work in the regular player, and as of 8/28/2007, I haven't tried it ;) 
+		* Supposedly, this won't work in the regular player, and as of 8/28/2006, I haven't tried it ;) 
 		* 
 		*/
 		
@@ -31,9 +32,10 @@
 			}
 			finally
 			{
-				var str:String = err.getStackTrace();
-				if(str.length > 0) 
+				if(err.hasOwnProperty("getStackTrace"))
 				{
+					var str:String = err.getStackTrace();
+					//Debug.trace(err.getStackTrace());
 					setCaller(resolveCaller(str));
 				}else
 				{
@@ -90,9 +92,22 @@
 		
 		private function resolveCaller(str:String):String
 		{
-			str = str.split("\n").join("");
-			var ary:Array = str.split("	at ");
-			return ary[3];
+			var ary:Array = [];
+			//Debug.trace("resolveCaller", str);
+			try
+			{
+				str = str.split("\n").join("");
+				ary = str.split("	at ");
+				str = ary[3];
+			}catch(e:Error)
+			{
+				
+			}finally
+			{
+				str = "";
+			}
+			
+			return str;
 		}
 		
 		public function setCaller(p_caller:String):void
