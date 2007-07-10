@@ -13,6 +13,7 @@ package com.blitzagency.xray.inspector.util
 	import flash.events.TimerEvent;
 	import flash.display.Sprite;
 	import com.blitzagency.xray.logger.XrayLogger;
+	import flash.events.AsyncErrorEvent;
 
 	public class ControlConnection extends LocalConnection
 	{
@@ -28,7 +29,9 @@ package com.blitzagency.xray.inspector.util
 			super();
 			client = this;
 			allowDomain("*");
+			allowInsecureDomain("*");
 			addEventListener(StatusEvent.STATUS, statusEventHandler);
+			addEventListener(AsyncErrorEvent.ASYNC_ERROR, asyncErrorHandler);
 			queTimer.addEventListener(TimerEvent.TIMER, timerTickHandler);
 			queTimer.addEventListener(TimerEvent.TIMER_COMPLETE, timerCompleteHander);
 			serialTimer.addEventListener(TimerEvent.TIMER, timerTickHandler);
@@ -99,9 +102,9 @@ package com.blitzagency.xray.inspector.util
             //fpsMeter.__set__runFPS(showFPS);
         }
         
-        public function getMovieClipPropertiesF2(target:String, showAll:Boolean):void
+        public function getMovieClipPropertiesF2(target:String, showAll:Boolean=false):void
         {
-        	//log.debug("getMovieClipPropertiesF2", target);
+        	log.debug("getMovieClipPropertiesF2", target);
             var obj:Object = objectInspector.getProperties(target);
             serialize(obj);
         }
@@ -235,5 +238,11 @@ package com.blitzagency.xray.inspector.util
     		//log.debug("statusEvent", e.level);
     		if(e.level == "status") {};//log.debug("message sent successfully");
     	}		
+    	
+    	private function asyncErrorHandler(e:AsyncErrorEvent):void
+    	{
+    		log.error("AsyncErrorEvent", e.error);
+    		//if(e.level == "status") {};//log.debug("message sent successfully");
+    	}
 	}
 }
