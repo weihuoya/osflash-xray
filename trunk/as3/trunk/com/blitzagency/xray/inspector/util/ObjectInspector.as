@@ -90,17 +90,22 @@
 		{
 			var obj:* = buildObjectFromString(target);
 			var returnObj:Object = {};
+			
+			
 			returnObj.ClassExtended = ObjectTools.getFullClassPath(obj);
 			returnObj.Class = ObjectTools.getImmediateClassPath(obj);
-	
-			var xml:XML = describeType(obj);
-			log.debug("describeType", xml.toXMLString());
-			log.debug("type?", target + ", " + returnObj.Class);
 			
+			var xml:XML = describeType(obj);
+			
+			log.debug("describeType", (xml.toXMLString()));
+			//log.debug("type?", target + ", " + returnObj.Class);
+			//return {};
 			for each(var item:XML in xml.accessor)
 			{
 				try
 				{
+					//log.debug("item.@access", item.@access);
+					//continue;
 					if(item.@access.indexOf("read") > -1)
 					{
 						var className:String = item.@type.split("::")[1];
@@ -108,11 +113,10 @@
 						var value:* = obj[item.@name];
 						returnObj[item.@name] = className + "::" + value;
 					}
+					
 				}catch(e:Error)
 				{
 					log.error("getProperties error (" + item.@name  + ")", e.message);
-				}finally
-				{
 					continue;
 				}
 			}
@@ -153,7 +157,7 @@
 					buildDisplayList(obj);
 				}else if(obj is Object)
 				{
-					buildObjectList(obj);
+					//buildObjectList(obj);
 				}
 				
 				returnList += "</" + currentTargetPath + ">";				
@@ -167,14 +171,20 @@
 		
 		private function buildDisplayList(obj:DisplayObjectContainer):void
 		{
-			for(var i:Number=0;i<obj.numChildren;i++)
+			try
 			{
-				var container:DisplayObject = obj.getChildAt(i);
-				var name:String = container.name;
-				var className:String = getQualifiedClassName(container).split("::")[1];
-				var mc:String = currentTargetPath + "." + name;
-				// add to the return string
-				addToReturnList(name, className, mc);
+				for(var i:Number=0;i<obj.numChildren;i++)
+				{
+					var container:DisplayObject = obj.getChildAt(i);
+					var name:String = container.name;
+					var className:String = getQualifiedClassName(container).split("::")[1];
+					var mc:String = currentTargetPath + "." + name;
+					// add to the return string
+					addToReturnList(name, className, mc);
+				}
+			}catch(e:Error)
+			{
+				log.debug("buildDisplayList error", e.message);
 			}
 		}
 		
