@@ -17,7 +17,7 @@ package com.blitzagency.xray.inspector.flex2
 		
 		public override function buildObjectFromString(target:String):Object
 		{
-			var obj:Object = mx.core.Application.application as Object;
+			var obj:Object = mx.core.Application.application as Application;
 			
 			var ary:Array = target.split(".");
 
@@ -29,11 +29,13 @@ package com.blitzagency.xray.inspector.flex2
 			
 			for(var i:Number=1;i<ary.length;i++)
 			{
-				var temp:Object = obj.getChildByName(ary[i]) as Object;
+				var temp:*
+				if(obj.hasOwnProperty("getChildByName")) temp = obj.getChildByName(ary[i]);
+				if(temp == null) temp = obj[ary[i]];
                 if(temp == obj) continue;
                 obj = temp;
             }
-
+			
 			return obj;
 		}		
 	}

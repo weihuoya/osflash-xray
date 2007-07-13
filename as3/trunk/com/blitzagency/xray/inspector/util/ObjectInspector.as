@@ -78,7 +78,9 @@
 			
 			for(var i:Number=1;i<ary.length;i++)
 			{
-				var temp:Object = obj.getChildByName(ary[i]) as Object
+				var temp:*
+				if(obj.hasOwnProperty("getChildByName")) temp = obj.getChildByName(ary[i]);
+				if(temp == null) temp = obj[ary[i]];
                 if(temp == obj) continue;
                 obj = temp;
             }
@@ -97,27 +99,70 @@
 			
 			var xml:XML = describeType(obj);
 			
+			var className:String = "";
+			var value:*;
+			
 			log.debug("describeType", (xml.toXMLString()));
-			//log.debug("type?", target + ", " + returnObj.Class);
+			//log.debug("type?", obj, getQualifiedClassName(obj));
+			//log.debug("target type?", target + ", " + returnObj.Class + ", " + returnObj.ClassExtended);
 			//return {};
 			for each(var item:XML in xml.accessor)
 			{
 				try
 				{
-					//log.debug("item.@access", item.@access);
-					//continue;
 					if(item.@access.indexOf("read") > -1)
 					{
-						var className:String = item.@type.split("::")[1];
+						className = item.@type.split("::")[1];
 						className = className == null ? item.@type : className;
-						var value:* = obj[item.@name];
+						value = obj[item.@name];
 						returnObj[item.@name] = className + "::" + value;
 					}
 					
 				}catch(e:Error)
 				{
-					log.error("getProperties error (" + item.@name  + ")", e.message);
+					log.error("getProperties accessor error (" + item.@name  + ")", e.message);
 					continue;
+				}
+			}
+			
+			for each(item in xml.variable)
+			{
+				try
+				{
+					if( item.@type == "Object" || item.@type == "Array" )
+					{
+						className = item.@type.split("::")[1];
+						className = className == null ? item.@type : className;
+						value = obj[item.@name];
+						returnObj[item.@name] = className + "::" + value;
+					}
+					
+				}catch(e:Error)
+				{
+					log.error("getProperties variable error (" + item.@name  + ")", e.message);
+					continue;
+				}
+			}
+			
+			if( obj is Object )
+			{
+				log.debug("is Object", obj);
+				for(var items:String in obj)
+				{
+					className = ObjectTools.getImmediateClassPath(obj[items]);
+					className = className == null ? item : className;
+					value = obj[items];
+					log.debug("className/Value", className, value);
+					returnObj[items] = className + "::" + value;
+				}
+			}else if( obj is Array )
+			{
+				for(var i:Number=0;i<obj.length;i++)
+				{
+					className = ObjectTools.getImmediateClassPath(obj[i]);
+					className = className == null ? String(i) : className;
+					value = obj[i];
+					returnObj[i] = className + "::" + value;
 				}
 			}
 			
@@ -142,22 +187,17 @@
 				// get object reference
 				var obj:DisplayObjectContainer = DisplayObjectContainer(buildObjectFromString(target));
 				
-				if(obj.hasOwnProperty("numChildren"))
-				{
-					if(obj.numChildren == 0) return "";
-				}
+				if( (obj.hasOwnProperty("numChildren") && obj.numChildren == 0) || obj is DisplayObject == false) return "";
 				
 				// the currentTarget should be correct now.  Create root node
 				var className:String = getQualifiedClassName(obj).split("::")[1] == undefined ? getQualifiedClassName(obj) : getQualifiedClassName(obj).split("::")[1]
 				returnList = "<" + currentTargetPath + " label=\"" + currentTargetPath + " (" + className + ")\" mc=\"" + currentTargetPath + "\" t=\"2\" >";
 				
 				// check for displayObject
-				if(obj is DisplayObject) 
+				if( obj is DisplayObject ) 
 				{
 					buildDisplayList(obj);
-				}else if(obj is Object)
-				{
-					//buildObjectList(obj);
+					buildObjectList(obj);
 				}
 				
 				returnList += "</" + currentTargetPath + ">";				
@@ -195,25 +235,34 @@
 		 */		
 		private function buildObjectList(obj:Object):void
 		{
-			log.debug("buildObjectList called");
-			//for(var i:Number=0;i<obj.numChildren;i++)
-			for(var items:String in obj)
+			var xml:XML = describeType(obj);
+			
+			for each(var item:XML in xml.variable)
 			{
-				log.debug("items", items);
-				var container:Object = obj[items];
-				var name:String = items;
-				var className:String = getQualifiedClassName(container).split("::")[1];
-				var mc:String = currentTargetPath + "." + name;
-				// add to the return string
-				addToReturnList(name, className, mc);
+				try
+				{
+					if( item.@type == "Object" || item.@type == "Array" )
+					{
+						var className:String = item.@type.split("::")[1];
+						className = className == null ? item.@type : className;
+						var name:String = item.@name;
+						var mc:String = currentTargetPath + "." + name;
+						addToReturnList(name, className, mc, 0);
+					}
+					
+				}catch(e:Error)
+				{
+					log.error("getProperties error (" + item.@name  + ")", e.message);
+					continue;
+				}
 			}
 		}
 		
-		private function addToReturnList(name:String, className:String, mc:String):void
+		private function addToReturnList(name:String, className:String, mc:String, type:Number=2):void
 		{
 			// <nodeName label=nodeName mc=mc t=2 />
 			name = name.split(" ").join("_");
-			returnList += "<" + name + " label=\"" + name + " (" + className + ")\" mc=\"" + mc + "\" t=\"2\" />";
+			returnList += "<" + name + " label=\"" + name + " (" + className + ")\" mc=\"" + mc + "\" t=\""+ type + "\" />";
 		}
 		
 		public function parseObjectToString(p_obj:Object, p_nodeName:String="root"):String
