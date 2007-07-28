@@ -2,19 +2,24 @@
 {
 	import com.blitzagency.xray.logger.XrayLogger;
 	import com.blitzagency.xray.logger.Log;
+	import com.blitzagency.xray.logger.util.ObjectTools;
 
 	public class XrayLog
 	{
 		private var logger:XrayLogger;
-		function XrayLog()
+		private var classReference:String = "";
+		
+		public function XrayLog(classRef:Object=null)
 		{
 			// CONSTRUCT
 			logger = XrayLogger.getInstance();
+			
+			if(classRef != null) classReference = ObjectTools.getImmediateClassPath(classRef);
 		}
 		
-		//public function debug(message:String, dump:*=""):void
 		public function debug(message:String, ...rest):void
 		{
+			message = classReference.length > 0 ? classReference + " : " + message : message;
 			if(rest.length == 0) logger.debug(new Log(message, null, XrayLogger.DEBUG));
 			for(var i:Number=0;i<rest.length;i++)
 			{
@@ -25,6 +30,7 @@
 		
 		public function info(message:String, ...rest):void
 		{
+			message = classReference.length > 0 ? classReference + " : " + message : message;
 			if(rest.length == 0) logger.info(new Log(message, null, XrayLogger.INFO));
 			for(var i:Number=0;i<rest.length;i++)
 			{
@@ -35,6 +41,7 @@
 		
 		public function warn(message:String, ...rest):void
 		{
+			message = classReference.length > 0 ? classReference + " : " + message : message;
 			if(rest.length == 0) logger.warn(new Log(message, null, XrayLogger.WARN));
 			for(var i:Number=0;i<rest.length;i++)
 			{
@@ -45,6 +52,7 @@
 		
 		public function error(message:String, ...rest):void
 		{
+			message = classReference.length > 0 ? classReference + " : " + message : message;
 			if(rest.length == 0) logger.error(new Log(message, null, XrayLogger.ERROR));
 			for(var i:Number=0;i<rest.length;i++)
 			{
@@ -55,6 +63,7 @@
 		
 		public function fatal(message:String, ...rest):void
 		{
+			message = classReference.length > 0 ? classReference + " : " + message : message;
 			if(rest.length == 0) logger.fatal(new Log(message, null, XrayLogger.FATAL));
 			for(var i:Number=0;i<rest.length;i++)
 			{
