@@ -4,14 +4,10 @@
 	import com.blitzagency.xray.logger.util.ObjectTools;
 	
 	import flash.display.DisplayObject;
-	import flash.display.Sprite;
-	import flash.utils.describeType;
-	import flash.xml.XMLDocument;
-	import flash.utils.getQualifiedClassName;
-	import flash.events.EventDispatcher;
-	import flash.display.Stage;
 	import flash.display.DisplayObjectContainer;
-	import flash.display.Shape;
+	import flash.events.EventDispatcher;
+	import flash.utils.describeType;
+	import flash.utils.getQualifiedClassName;
 
 	// we extend DisplayObject so that we can have access to the base stage property
 	public class ObjectInspector extends EventDispatcher
@@ -61,7 +57,8 @@
 			
 			try
 			{
-				obj = stage.root;
+				//obj = stage.root;
+				obj = stage.getChildAt(0) as DisplayObjectContainer;
 				//obj = stage.getChildByName("root1") as DisplayObjectContainer;
 			}catch(e:Error)
 			{
@@ -79,9 +76,16 @@
 			for(var i:Number=1;i<ary.length;i++)
 			{
 				var temp:*
-				if(obj.hasOwnProperty("getChildByName")) temp = obj.getChildByName(ary[i]);
-				if(temp == null) temp = obj[ary[i]];
-                if(temp == obj) continue;
+				 
+				if( obj.hasOwnProperty("getChildByName")  /* && !obj is Array */ ) 
+					temp = obj.getChildByName(ary[i]);
+				else if( obj is Array )
+				{
+					trace("FOUND ARRAY", ary[i]);
+					temp = obj[Number(ary[i])];
+				}
+				if( temp == null && obj[ary[i]] ) temp = obj[ary[i]];
+                if( temp == obj) continue;
                 obj = temp;
             }
 
@@ -129,13 +133,13 @@
 			{
 				try
 				{
-					if( item.@type == "Object" || item.@type == "Array" )
-					{
+					//if( item.@type == "Object" || item.@type == "Array" || item.@type == "org.papervision3d.scenes::Scene3D" )
+					//{
 						className = item.@type.split("::")[1];
 						className = className == null ? item.@type : className;
 						value = obj[item.@name];
 						returnObj[item.@name] = className + "::" + value;
-					}
+					//}
 					
 				}catch(e:Error)
 				{

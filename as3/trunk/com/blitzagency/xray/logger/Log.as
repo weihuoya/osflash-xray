@@ -20,7 +20,7 @@
 		
 		public function Log(p_message:String, p_dump:Object, p_level:Number, ...rest)
 		{
-			var err:LogError;
+			var err:Error;
 			var nullArray:Array;
 			try
 			{
@@ -28,14 +28,13 @@
 			}
 			catch(e:Error)
 			{
-				err = new LogError("log");
+				err = e;
 			}
 			finally
 			{
-				if(err.hasOwnProperty("getStackTrace"))
+				if( err.getStackTrace().length > 0 )
 				{
 					var str:String = err.getStackTrace();
-					//Debug.trace(err.getStackTrace());
 					setCaller(resolveCaller(str));
 				}else
 				{
@@ -93,19 +92,9 @@
 		private function resolveCaller(str:String):String
 		{
 			var ary:Array = [];
-			//Debug.trace("resolveCaller", str);
-			try
-			{
-				str = str.split("\n").join("");
-				ary = str.split("	at ");
-				str = ary[3];
-			}catch(e:Error)
-			{
-				
-			}finally
-			{
-				str = "";
-			}
+			ary = str.split("\n");
+			ary = String(ary[3]).split("\tat ");
+			str = ary[1].split("]").join("");;
 			
 			return str;
 		}
@@ -119,14 +108,5 @@
 		{
 			return caller;
 		}
-	}
-}
-
-class LogError extends Error
-{
-	public function LogError(message:String)
-	{
-		// constructor
-		super(message);
 	}
 }

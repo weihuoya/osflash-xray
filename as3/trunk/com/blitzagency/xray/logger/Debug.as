@@ -15,10 +15,11 @@
 	neoRiley@gmail.com
 	www.osflash.org/xray
 */
-	import flash.utils.*;
 	import com.blitzagency.xray.logger.events.DebugDispatcher;
-	import flash.net.LocalConnection;
+	
 	import flash.events.StatusEvent;
+	import flash.net.LocalConnection;
+	import flash.utils.*;
 	
 	public class Debug
 	{    
@@ -112,6 +113,12 @@
 		 * 	@param pPackage - passed in via XrayLogger.  Package info sent along to Xray's interface for package filtering
 		 */
 		public static function traceObject(o:Object, pRecurseDepth:Number = 254, pIndent:Number = 0, pPackage:String = "", pLevel:Number = 0):void 
+		{			
+			var str:String = recurseObject("", o, pRecurseDepth, pIndent, pPackage, pLevel);
+			Debug.trace(str, pPackage, pLevel);
+		}
+		
+		protected static function recurseObject(message:String, o:Object, pRecurseDepth:Number = 254, pIndent:Number = 0, pPackage:String = "", pLevel:Number = 0):String
 		{
 			try
 			{
@@ -134,16 +141,19 @@
 					{
 						obj = "[Object]";
 					}
-					Debug.trace(lead + prop + ": " + obj, pPackage, pLevel);
+					message += lead + prop + ": " + obj + "\n";
+					//Debug.trace(lead + prop + ": " + obj, pPackage, pLevel);
 					if (recurseDepth > 0) 
 					{
-						Debug.traceObject(o[prop], recurseDepth-1, indent+1, pPackage, pLevel);
+						message = Debug.recurseObject(message, o[prop], recurseDepth-1, indent+1, pPackage, pLevel);
 					}
 				}
 			}catch(e:Error)
 			{
 				//
 			}
+			
+			return message;
 		}
 	}
 }
