@@ -6,6 +6,7 @@
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.events.EventDispatcher;
+	import flash.utils.Dictionary;
 	import flash.utils.describeType;
 	import flash.utils.getQualifiedClassName;
 
@@ -73,19 +74,37 @@
 				return obj
 			}
 			
+			var temp:* = null;
 			for(var i:Number=1;i<ary.length;i++)
 			{
-				var temp:*
-				 
+				temp = null;
 				if( obj.hasOwnProperty("getChildByName")  /* && !obj is Array */ ) 
 					temp = obj.getChildByName(ary[i]);
 				else if( obj is Array )
 				{
-					trace("FOUND ARRAY", ary[i]);
+					//trace("FOUND ARRAY", ary[i]);
 					temp = obj[Number(ary[i])];
 				}
-				if( temp == null && obj[ary[i]] ) temp = obj[ary[i]];
+				else if( obj is Dictionary )
+				{
+					//trace("Dictionary Found");
+					if( !isNaN(ary[i]) )
+					{
+						//trace("is Number", ary[i]);
+						var counter:Number = 0;
+						for each( var dObj:* in obj )
+						{
+							if( counter == Number(ary[i]) ) temp = dObj;
+							counter++;
+						}
+					}
+				}
+				
+				if( temp == null && obj[String(ary[i])] ) temp = obj[ary[i]];
+				//trace("TEMP obj null?", temp == null);
                 if( temp == obj) continue;
+                if( temp == null ) break;
+				//trace("Building path", ary[i], temp is Dictionary)
                 obj = temp;
             }
 
@@ -106,10 +125,8 @@
 			var className:String = "";
 			var value:*;
 			
-			log.debug("describeType", (xml.toXMLString()));
-			//log.debug("type?", obj, getQualifiedClassName(obj));
-			//log.debug("target type?", target + ", " + returnObj.Class + ", " + returnObj.ClassExtended);
-			//return {};
+			//log.debug("describeType", (xml.toXMLString()));
+			
 			for each(var item:XML in xml.accessor)
 			{
 				try
@@ -148,19 +165,37 @@
 				}
 			}
 			
-			if( obj is Object )
+			if( obj is Dictionary )
 			{
-				log.debug("is Object", obj);
-				for(var items:String in obj)
+				//log.debug("IS Dictionary");
+				//for(var items:String in obj)
+				var diCounter:Number = 0;
+				for each( var diItem:Object in obj)
+				{
+					className = ObjectTools.getImmediateClassPath(diItem);
+					className = className == null ? "dictionary Item" : className;
+					
+					value = diItem;
+					//log.debug("className/Value", className, value);
+					returnObj[String(diCounter)] = className + "::" + value;
+					diCounter++;
+				} 
+			}			
+			else if( obj is Object )
+			{
+				//log.debug("is Object", obj);
+				for each (var items:String in obj)
 				{
 					className = ObjectTools.getImmediateClassPath(obj[items]);
 					className = className == null ? item : className;
 					value = obj[items];
-					log.debug("className/Value", className, value);
+					//log.debug("className/Value", className, value);
 					returnObj[items] = className + "::" + value;
 				}
-			}else if( obj is Array )
+			}
+			else if( obj is Array )
 			{
+				//log.debug("IS ARRAY");
 				for(var i:Number=0;i<obj.length;i++)
 				{
 					className = ObjectTools.getImmediateClassPath(obj[i]);

@@ -119,7 +119,7 @@ package com.blitzagency.xray.inspector.util
     	
     	public function getObjPropertiesF2(baseTarget:String, key:String) :void
 		{
-			log.debug("getObjPropertiesF2", baseTarget);
+			log.debug("getObjPropertiesF2", baseTarget, key);
             baseTarget = key.length > 0 ? baseTarget + "." + key : baseTarget;
             var obj:Object = objectInspector.getProperties(baseTarget);
             serialize(obj);
