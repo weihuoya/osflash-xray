@@ -1,4 +1,4 @@
-package com.blitzagency.xray.inspector.flex2
+package com.blitzagency.xray.inspector.flex
 {
 	import com.blitzagency.xray.inspector.Xray;
 	import com.blitzagency.xray.inspector.commander.Commander;
