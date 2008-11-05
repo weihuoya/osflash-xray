@@ -74,6 +74,11 @@
 				return obj
 			}
 			
+			return parseObjectString(ary, obj);
+		}
+		
+		protected function parseObjectString(ary:Array, obj:Object):Object
+		{
 			var temp:* = null;
 			for(var i:Number=1;i<ary.length;i++)
 			{
