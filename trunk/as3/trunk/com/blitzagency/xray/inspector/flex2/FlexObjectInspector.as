@@ -30,63 +30,8 @@ package com.blitzagency.xray.inspector.flex2
 				return obj
 			}
 			
-			trace("Build object from string", ary, obj);
 			return parseObjectString(ary, obj);
 		}	
-		
-		/* protected override function parseObjectString(ary:Array, obj:Object):Object
-		{
-			var temp:* = null;
-			for(var i:Number=1;i<ary.length;i++)
-			{
-				temp = null;
-				trace("OBJECT TYPE", ObjectTools.getImmediateClassPath(obj));
-				if( obj.hasOwnProperty("getChildByName" && isNaN(ary[i]) ) ) 
-				{
-					temp = obj.getChildByName(ary[i]);
-				}
-				else if( obj.hasOwnProperty("getChildAt" && !isNaN(ary[i]) ) ) 
-				{
-					temp = obj.getChildAt(ary[i]);
-				}
-				else if( obj is Array )
-				{
-					trace("FOUND ARRAY", ary[i]);
-					temp = obj[Number(ary[i])];
-				}
-				else if( obj is Dictionary )
-				{
-					trace("Dictionary Found");
-					if( !isNaN(ary[i]) )
-					{
-						//trace("is Number", ary[i]);
-						var counter:Number = 0;
-						for each( var dObj:* in obj )
-						{
-							if( counter == Number(ary[i]) ) temp = dObj;
-							counter++;
-						}
-					}
-				}
-				//else if ( obj is IChildList || ObjectTools.getImmediateClassPath(obj) == "Object.mx.core.ContainerRawChildrenList" ) // rawChildren
-				//{
-				//	trace("is rawchild");
-				//	if( !isNaN(ary[i]) )
-				//	{
-				//		temp = obj.getChildAt(Number(ary[i]));
-				//	}
-				//}
-				
-				if( temp == null && obj.hasOwnProperty([String(ary[i])]) ) temp = obj[ary[i]];
-				//trace("TEMP obj null?", temp == null);
-                if( temp == obj) continue;
-                if( temp == null ) break;
-				//trace("Building path", ary[i], temp is Dictionary)
-                obj = temp;
-            }
-
-			return obj;
-		} */
 		
 		public override function parseObjectsForReturn(obj:Object, returnObj:Object):Object
 		{
