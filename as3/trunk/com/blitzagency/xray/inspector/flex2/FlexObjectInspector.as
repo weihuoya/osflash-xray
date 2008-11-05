@@ -27,7 +27,8 @@ package com.blitzagency.xray.inspector.flex2
 				return obj
 			}
 			
-			for(var i:Number=1;i<ary.length;i++)
+			return parseObjectString(ary, obj);
+			/* for(var i:Number=1;i<ary.length;i++)
 			{
 				var temp:*
 				if(obj.hasOwnProperty("getChildByName")) temp = obj.getChildByName(ary[i]);
@@ -36,7 +37,7 @@ package com.blitzagency.xray.inspector.flex2
                 obj = temp;
             }
 			
-			return obj;
+			return obj; */
 		}		
 	}
 }
