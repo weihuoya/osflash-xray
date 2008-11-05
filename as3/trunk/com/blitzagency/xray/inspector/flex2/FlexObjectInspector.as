@@ -30,35 +30,33 @@ package com.blitzagency.xray.inspector.flex2
 				return obj
 			}
 			
+			trace("Build object from string", ary, obj);
 			return parseObjectString(ary, obj);
-			/* for(var i:Number=1;i<ary.length;i++)
-			{
-				var temp:*
-				if(obj.hasOwnProperty("getChildByName")) temp = obj.getChildByName(ary[i]);
-				if(temp == null) temp = obj[ary[i]];
-                if(temp == obj) continue;
-                obj = temp;
-            }
-			
-			return obj; */
 		}	
 		
-		protected override function parseObjectString(ary:Array, obj:Object):Object
+		/* protected override function parseObjectString(ary:Array, obj:Object):Object
 		{
 			var temp:* = null;
 			for(var i:Number=1;i<ary.length;i++)
 			{
 				temp = null;
-				if( obj.hasOwnProperty("getChildByName")  /* && !obj is Array */ ) 
+				trace("OBJECT TYPE", ObjectTools.getImmediateClassPath(obj));
+				if( obj.hasOwnProperty("getChildByName" && isNaN(ary[i]) ) ) 
+				{
 					temp = obj.getChildByName(ary[i]);
+				}
+				else if( obj.hasOwnProperty("getChildAt" && !isNaN(ary[i]) ) ) 
+				{
+					temp = obj.getChildAt(ary[i]);
+				}
 				else if( obj is Array )
 				{
-					//trace("FOUND ARRAY", ary[i]);
+					trace("FOUND ARRAY", ary[i]);
 					temp = obj[Number(ary[i])];
 				}
 				else if( obj is Dictionary )
 				{
-					//trace("Dictionary Found");
+					trace("Dictionary Found");
 					if( !isNaN(ary[i]) )
 					{
 						//trace("is Number", ary[i]);
@@ -70,15 +68,16 @@ package com.blitzagency.xray.inspector.flex2
 						}
 					}
 				}
-				else if ( obj is IChildList ) // rawChildren
-				{
-					if( !isNaN(ary[i]) )
-					{
-						temp = obj.getChildAt(Number(ary[i]));
-					}
-				}
+				//else if ( obj is IChildList || ObjectTools.getImmediateClassPath(obj) == "Object.mx.core.ContainerRawChildrenList" ) // rawChildren
+				//{
+				//	trace("is rawchild");
+				//	if( !isNaN(ary[i]) )
+				//	{
+				//		temp = obj.getChildAt(Number(ary[i]));
+				//	}
+				//}
 				
-				if( temp == null && obj[String(ary[i])] ) temp = obj[ary[i]];
+				if( temp == null && obj.hasOwnProperty([String(ary[i])]) ) temp = obj[ary[i]];
 				//trace("TEMP obj null?", temp == null);
                 if( temp == obj) continue;
                 if( temp == null ) break;
@@ -87,10 +86,12 @@ package com.blitzagency.xray.inspector.flex2
             }
 
 			return obj;
-		}	
+		} */
 		
 		public override function parseObjectsForReturn(obj:Object, returnObj:Object):Object
 		{
+			returnObj = super.parseObjectsForReturn(obj, returnObj);
+			
 			if( obj is IChildList )
 			{
 				//log.debug("IS RawChild");
