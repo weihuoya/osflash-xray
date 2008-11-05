@@ -170,47 +170,82 @@
 				}
 			}
 			
+			return parseObjectsForReturn(obj, returnObj);
+		}
+		
+		public function parseObjectsForReturn(obj:Object, returnObj:Object):Object
+		{
 			if( obj is Dictionary )
 			{
 				//log.debug("IS Dictionary");
 				//for(var items:String in obj)
-				var diCounter:Number = 0;
-				for each( var diItem:Object in obj)
-				{
-					className = ObjectTools.getImmediateClassPath(diItem);
-					className = className == null ? "dictionary Item" : className;
-					
-					value = diItem;
-					//log.debug("className/Value", className, value);
-					returnObj[String(diCounter)] = className + "::" + value;
-					diCounter++;
-				} 
+				returnObj = processDictionary(obj, returnObj);
 			}			
 			else if( obj is Object )
 			{
 				//log.debug("is Object", obj);
-				for each (var items:String in obj)
-				{
-					className = ObjectTools.getImmediateClassPath(obj[items]);
-					className = className == null ? item : className;
-					value = obj[items];
-					//log.debug("className/Value", className, value);
-					returnObj[items] = className + "::" + value;
-				}
+				returnObj = processObject(obj, returnObj);
+				
 			}
 			else if( obj is Array )
 			{
 				//log.debug("IS ARRAY");
-				for(var i:Number=0;i<obj.length;i++)
-				{
-					className = ObjectTools.getImmediateClassPath(obj[i]);
-					className = className == null ? String(i) : className;
-					value = obj[i];
-					returnObj[i] = className + "::" + value;
-				}
+				returnObj = processArray(obj, returnObj);				
 			}
 			
 			return returnObj;
+		}
+		
+		public function processObject( obj:Object, returnObj:Object ):Object
+		{
+			var className:String = "";
+			var value:Object;
+			
+			for each (var items:String in obj)
+			{
+				className = ObjectTools.getImmediateClassPath(obj[items]);
+				className = className == null ? items : className;
+				value = obj[items];
+				//log.debug("className/Value", className, value);
+				returnObj[items] = className + "::" + value;
+			}
+			
+			return returnObj;
+		}
+		
+		public function processArray( obj:Object, returnObj:Object ):Object
+		{
+			var className:String = "";
+			var value:Object;
+			
+			for(var i:Number=0;i<obj.length;i++)
+			{
+				className = ObjectTools.getImmediateClassPath(obj[i]);
+				className = className == null ? String(i) : className;
+				value = obj[i];
+				returnObj[i] = className + "::" + value;
+			}
+				
+			return returnObj;
+		}
+		
+		public function processDictionary( obj:Object, returnObj:Object ):Object
+		{
+			var className:String = "";
+			var value:Object;
+			var diCounter:Number = 0;
+			for each( var diItem:Object in obj)
+			{
+				className = ObjectTools.getImmediateClassPath(diItem);
+				className = className == null ? "dictionary Item" : className;
+				
+				value = diItem;
+				//log.debug("className/Value", className, value);
+				returnObj[String(diCounter)] = className + "::" + value;
+				diCounter++;
+			} 
+			
+			return returnObj;			
 		}
 		
 		/*
