@@ -83,16 +83,25 @@
 			for(var i:Number=1;i<ary.length;i++)
 			{
 				temp = null;
-				if( obj.hasOwnProperty("getChildByName")  /* && !obj is Array */ ) 
+				trace(" isNaN and property", isNaN(ary[i]), obj.hasOwnProperty("getChildByName"), obj.hasOwnProperty("getChildAt"));
+				if( obj.hasOwnProperty("getChildByName") && isNaN(ary[i]) ) 
+				{
+					trace("found pure object with string ID");
 					temp = obj.getChildByName(ary[i]);
+				}
+				else if( obj.hasOwnProperty("getChildAt") && !isNaN(ary[i]) )
+				{
+					trace("found rawchild mostlikely:: getChildAt");
+					temp = obj.getChildAt(ary[i]);
+				}
 				else if( obj is Array )
 				{
-					//trace("FOUND ARRAY", ary[i]);
+					trace("FOUND ARRAY", ary[i]);
 					temp = obj[Number(ary[i])];
 				}
 				else if( obj is Dictionary )
 				{
-					//trace("Dictionary Found");
+					trace("Dictionary Found");
 					if( !isNaN(ary[i]) )
 					{
 						//trace("is Number", ary[i]);
@@ -105,7 +114,7 @@
 					}
 				}
 				
-				if( temp == null && obj[String(ary[i])] ) temp = obj[ary[i]];
+				if( temp == null && obj.hasOwnProperty([String(ary[i])]) ) temp = obj[ary[i]];
 				//trace("TEMP obj null?", temp == null);
                 if( temp == obj) continue;
                 if( temp == null ) break;
