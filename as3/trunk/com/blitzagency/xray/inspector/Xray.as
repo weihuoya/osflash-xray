@@ -20,12 +20,15 @@
 	
 	public class Xray extends Sprite
 	{
-		protected var log:XrayLog = new XrayLog();
-		protected var objectInspector:ObjectInspector;
-		protected var controlConnection:ControlConnection;
+		public var useMouseHighlighting							:Boolean = false;
 		
-		public function Xray()
+		protected var log										:XrayLog = new XrayLog();
+		protected var objectInspector							:ObjectInspector;
+		protected var controlConnection							:ControlConnection;
+		
+		public function Xray(useMouseHighlighting:Boolean=false)
 		{
+			this.useMouseHighlighting = useMouseHighlighting;
 			init();
 		}
 		
@@ -49,7 +52,7 @@
 			controlConnection.send("_xray_conn", "checkFPSOn");
 		}
 		
-		private function handleAddedToStage(e:Event):void
+		protected function handleAddedToStage(e:Event):void
 		{
 			// doing this so that ObjectInspector will have it's own stage property to work with
 			objectInspector.stage = stage; 

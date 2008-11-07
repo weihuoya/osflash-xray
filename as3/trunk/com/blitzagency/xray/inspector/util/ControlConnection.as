@@ -135,7 +135,7 @@ package com.blitzagency.xray.inspector.util
         public function highlightClip(target:String,...rest) :void
         {
         	// during the flex testing, turn this off
-        	return;
+        	//return;
             var obj:Sprite = Sprite(objectInspector.buildObjectFromString(target));
             if(obj == null) return;
             obj.graphics.clear();
@@ -144,7 +144,7 @@ package com.blitzagency.xray.inspector.util
         }
         public function lowlightClip(target:String,...rest) :void
         {
-        	return;
+        	//return;
             var obj:Sprite = Sprite(objectInspector.buildObjectFromString(target));
             if(obj == null) return;
             obj.graphics.clear();

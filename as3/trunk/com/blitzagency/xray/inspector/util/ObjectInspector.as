@@ -9,14 +9,16 @@
 	import flash.utils.Dictionary;
 	import flash.utils.describeType;
 	import flash.utils.getQualifiedClassName;
+	
+	import mx.core.IChildList;
 
 	// we extend DisplayObject so that we can have access to the base stage property
 	public class ObjectInspector extends EventDispatcher
 	{			
-		private var log																	:XrayLog = new XrayLog();
-		private var returnList															:String = "";
+		protected var log																	:XrayLog = new XrayLog();
+		protected var returnList															:String = "";
 		protected var currentTargetPath													:String = "";
-		private var _stage																:DisplayObjectContainer;
+		protected var _stage																:DisplayObjectContainer;
 		
 		public function set stage(p_stage:DisplayObjectContainer):void
 		{
@@ -86,13 +88,14 @@
 				//trace(" isNaN and property", isNaN(ary[i]), obj.hasOwnProperty("getChildByName"), obj.hasOwnProperty("getChildAt"));
 				if( obj.hasOwnProperty("getChildByName") && isNaN(ary[i]) ) 
 				{
-					//trace("found pure object with string ID");
+					trace("found pure object with string ID");
 					temp = obj.getChildByName(ary[i]);
 				}
 				else if( obj.hasOwnProperty("getChildAt") && !isNaN(ary[i]) )
 				{
-					//trace("found rawchild mostlikely:: getChildAt");
-					temp = obj.getChildAt(ary[i]);
+					trace("found rawchild mostlikely:: getChildAt", ary[i], obj is IChildList, obj.numChildren);
+					//temp = obj.getChildAt(ary[i]);
+					temp = checkOtherChildSources(obj, ary[i]);
 				}
 				else if( obj is Array )
 				{
@@ -123,6 +126,13 @@
             }
 
 			return obj;
+		}
+		
+		// this is really for FleXray to be able to find rawChildren
+		protected function checkOtherChildSources(obj:Object, index:Number):Object
+		{
+			if( obj.numChildren > index ) return obj.getChildAt(index);
+			return null
 		}
 		
 		public function getProperties(target:String):Object
@@ -272,9 +282,10 @@
 			{
 				currentTargetPath = target;
 				
+				trace("************ inspectObject", target);
 				// get object reference
 				var obj:DisplayObjectContainer = DisplayObjectContainer(buildObjectFromString(target));
-				
+				trace("************** inspect object", obj, obj.numChildren, obj is DisplayObject);
 				if( (obj.hasOwnProperty("numChildren") && obj.numChildren == 0) || obj is DisplayObject == false) return "";
 				
 				// the currentTarget should be correct now.  Create root node
@@ -297,7 +308,7 @@
 			return returnList;		
 		}
 		
-		private function buildDisplayList(obj:DisplayObjectContainer):void
+		protected function buildDisplayList(obj:Object):void
 		{
 			try
 			{
@@ -321,7 +332,7 @@
 		 * @param obj
 		 * 
 		 */		
-		private function buildObjectList(obj:Object):void
+		protected function buildObjectList(obj:Object):void
 		{
 			var xml:XML = describeType(obj);
 			
@@ -329,7 +340,7 @@
 			{
 				try
 				{
-					if( item.@type == "Object" || item.@type == "Array" )
+					if( item.@type == "Object" || item.@type == "Array" || item.@type == "Dictionary" )
 					{
 						var className:String = item.@type.split("::")[1];
 						className = className == null ? item.@type : className;
@@ -346,7 +357,7 @@
 			}
 		}
 		
-		private function addToReturnList(name:String, className:String, mc:String, type:Number=2):void
+		protected function addToReturnList(name:String, className:String, mc:String, type:Number=2):void
 		{
 			// <nodeName label=nodeName mc=mc t=2 />
 			name = name.split(" ").join("_");
@@ -372,7 +383,7 @@
 			return str;
 		}
 		
-		private function encode(p_str:String):String
+		protected function encode(p_str:String):String
 		{
 			for(var i:Number=0;i<strings.length;i++)
 			{
