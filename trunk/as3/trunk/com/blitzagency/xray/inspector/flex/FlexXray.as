@@ -42,7 +42,6 @@ package com.blitzagency.xray.inspector.flex
 		
 		protected function setupMouseHighlighting():void
 		{
-			trace("setupMouseHighlighting called");
 			Application(Application.application).stage.addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove, false, 0, true);
 		}
 		
