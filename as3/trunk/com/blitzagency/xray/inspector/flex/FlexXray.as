@@ -46,21 +46,21 @@ package com.blitzagency.xray.inspector.flex
 			Application(Application.application).stage.addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove, false, 0, true);
 		}
 		
-		protected function handleMouseMove(e:MouseEvent):void
+		override protected function handleMouseMove(e:MouseEvent):void
 		{
 			var ary:Array = Sprite(Application.application).getObjectsUnderPoint(new Point(e.stageX, e.stageY));
-			trace("Objects under mouse", ary.length);
+			//strace("Objects under mouse", ary.length);
 			for( var i:int=0; i<ary.length; i++)
 			{
-				 if( ary[i] as Sprite != null && Sprite(ary[i]).hasOwnProperty("focusRect") )
+				  if( ary[i] as Sprite != null && Sprite(ary[i]).hasOwnProperty("focusRect") )
 				{
 					Sprite(ary[i]).focusRect = true;
 					Application(Application.application).stage.focus = ary[i];
-				} 
-				/* if( ary[i] as Sprite != null && Sprite(ary[i]).hasOwnProperty("graphics") )
+				}  
+				/*  if( ary[i] as Sprite != null && Sprite(ary[i]).hasOwnProperty("graphics") )
 				{
 					drawHighlight(Sprite(ary[i]));
-				} */
+				}  */
 				
 				trace("object: ", ary[i].name, ObjectTools.getImmediateClassPath(ary[i]));
 			}
@@ -69,8 +69,8 @@ package com.blitzagency.xray.inspector.flex
 		protected function drawHighlight(obj:Sprite):void
 		{
 			//obj.graphics.clear();
-			var rect:Rectangle = obj.transform.pixelBounds;
-			var g:Graphics = obj.graphics;
+			var rect:Rectangle = obj.getBounds(Application(Application.application).stage);
+			var g:Graphics = Application(Application.application).graphics;
             g.lineStyle(1,0x00ff00,1,false);
             g.drawRect(rect.x,rect.y,rect.width, rect.height);
             g.endFill();

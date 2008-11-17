@@ -9,8 +9,6 @@
 	import flash.utils.Dictionary;
 	import flash.utils.describeType;
 	import flash.utils.getQualifiedClassName;
-	
-	import mx.core.IChildList;
 
 	// we extend DisplayObject so that we can have access to the base stage property
 	public class ObjectInspector extends EventDispatcher
@@ -93,7 +91,7 @@
 				}
 				else if( obj.hasOwnProperty("getChildAt") && !isNaN(ary[i]) )
 				{
-					trace("found rawchild mostlikely:: getChildAt", ary[i], obj is IChildList, obj.numChildren);
+					//trace("found rawchild mostlikely:: getChildAt", ary[i], obj is IChildList, obj.numChildren);
 					//temp = obj.getChildAt(ary[i]);
 					temp = checkOtherChildSources(obj, ary[i]);
 				}

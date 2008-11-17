@@ -1,15 +1,17 @@
 ﻿package com.blitzagency.xray.inspector
 {
+	import com.blitzagency.xray.inspector.commander.Commander;
 	import com.blitzagency.xray.inspector.util.ControlConnection;
 	import com.blitzagency.xray.inspector.util.ObjectInspector;
-	
-	import flash.display.Sprite;
-	import flash.display.Stage;
-	import flash.utils.getQualifiedClassName;
 	import com.blitzagency.xray.logger.XrayLog;
-	import flash.events.Event;
-	import com.blitzagency.xray.inspector.commander.Commander;
+	import com.blitzagency.xray.logger.util.ObjectTools;
+	
 	import flash.display.DisplayObjectContainer;
+	import flash.display.Sprite;
+	import flash.events.Event;
+	import flash.events.MouseEvent;
+	import flash.geom.Point;
+	import flash.utils.getQualifiedClassName;
 	
 	/**
 	* This is the main entry point for Xray
@@ -59,6 +61,28 @@
 			
 			Commander.getInstance().objectInspector = objectInspector;
 			Commander.getInstance().stage = stage.getChildByName("root1") as DisplayObjectContainer;
+			
+			stage.addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove, false, 0, true);
+		}
+		
+		protected function handleMouseMove(e:MouseEvent):void
+		{
+			var ary:Array = stage.getObjectsUnderPoint(new Point(e.stageX, e.stageY));
+			//strace("Objects under mouse", ary.length);
+			for( var i:int=0; i<ary.length; i++)
+			{
+				 if( ary[i] as Sprite != null && Sprite(ary[i]).hasOwnProperty("focusRect") )
+				{
+					Sprite(ary[i]).focusRect = true;
+					stage.focus = ary[i];
+				} 
+				/* if( ary[i] as Sprite != null && Sprite(ary[i]).hasOwnProperty("graphics") )
+				{
+					drawHighlight(Sprite(ary[i]));
+				} */
+				
+				trace("object: ", ary[i].name, ObjectTools.getImmediateClassPath(ary[i]));
+			}
 		}
 	}
 }
