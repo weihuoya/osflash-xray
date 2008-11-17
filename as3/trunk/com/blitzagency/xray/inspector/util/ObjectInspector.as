@@ -86,7 +86,7 @@
 				//trace(" isNaN and property", isNaN(ary[i]), obj.hasOwnProperty("getChildByName"), obj.hasOwnProperty("getChildAt"));
 				if( obj.hasOwnProperty("getChildByName") && isNaN(ary[i]) ) 
 				{
-					trace("found pure object with string ID");
+					//trace("found pure object with string ID");
 					temp = obj.getChildByName(ary[i]);
 				}
 				else if( obj.hasOwnProperty("getChildAt") && !isNaN(ary[i]) )
@@ -280,10 +280,10 @@
 			{
 				currentTargetPath = target;
 				
-				trace("************ inspectObject", target);
+				//trace("************ inspectObject", target);
 				// get object reference
 				var obj:DisplayObjectContainer = DisplayObjectContainer(buildObjectFromString(target));
-				trace("************** inspect object", obj, obj.numChildren, obj is DisplayObject);
+				//trace("************** inspect object", obj, obj.numChildren, obj is DisplayObject);
 				if( (obj.hasOwnProperty("numChildren") && obj.numChildren == 0) || obj is DisplayObject == false) return "";
 				
 				// the currentTarget should be correct now.  Create root node
